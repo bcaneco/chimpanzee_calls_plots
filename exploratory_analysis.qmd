@@ -1,0 +1,224 @@
+---
+title: "Data Exploration"
+author: "Bruno Caneco"
+toc: true
+toc-depth: 4
+format: 
+  html:
+    df-print: paged
+    code-fold: true
+editor: visual
+---
+
+```{r}
+#| include: false
+
+library(tidyverse)
+library(readxl)
+library(MetBrewer)
+
+theme_set(theme_bw())
+
+col_pal <- met.brewer("Lakota", n = 2)
+```
+
+
+
+
+Rough and overall look at the data to get familiar with variables, basic
+trends and spot any odd values.
+
+
+## Data description
+
+- The dataset contains acoustic data of calls from two subjects, *Riet* and *Alex*. 
+- Data was recorded over two separate sessions for each subject.
+- Rows correspond to call events and columns provide acoustic features of each call
+
+```{r}
+# load data
+data <- read_xlsx(path = "data/New Master Excel.xlsx")
+data
+```
+
+### Variables of interest
+
+Variables can be broadly grouped into:
+
+- Call features:
+  - `Delta Time`: duration of the call (secs)
+  - `Max Freq`: maximum frequency of the call (Hz)
+  - `PFC Avg Slope`: voice inflection of the call
+  - `Avg Entropy`: entropy of the call (measuring efficiency in transmitting a message?)
+  
+- Change from preceding call
+  - `ΔVoice Freq`: in maximum frequency
+  - `ΔVoice Inflexion`: in voice inflection
+  -  `ΔVoice Entropy`: in entropy
+
+
+
+## Data pre-processing
+
+- Adding a couple of new columns:
+  - `delta_duration`: change in duration of two consecutive calls (as per chat with Adriano)
+  - `session`: within-subject session identifier
+
+- Modify column names for easier coding
+
+
+```{r}
+data <- data %>% 
+  group_by(File) %>%
+  # add column with change in call duration
+  mutate(
+    delta_duration = `Delta Time` - lag(`Delta Time`), 
+    .after = `Delta Time`
+  ) %>%
+  group_by(Subject) %>%
+  # add session number
+  mutate(
+    session = factor(File, levels = unique(File), labels = 1:length(unique(File))),
+    .after = Subject
+    ) %>%
+  ungroup() %>%
+  # rename columns
+  rename_with(.fn = ~ str_replace(., pattern = "Δ", replacement = "delta_")) %>%
+  rename_with(.fn = ~ str_to_lower(str_replace_all(., pattern = " ", replacement = "_")))
+
+#head(data)
+
+```
+
+
+```{r}
+#| include: false
+
+# save data out
+write_csv(x = data, file = "data/calls_data.csv")
+```
+
+
+## Exploring data at subject and session level
+
+
+### Overall (naive) data summaries
+
+```{r}
+data %>%
+  group_by(subject, session) %>%
+  summarise(
+    n_calls = n(),   # nr calls/session
+    session_duration = max(end_time), # session duration
+    #calls_per_min = n_calls/session_duration * 60, # nr calls/minute
+    across(
+      c(delta_time, low_freq, high_freq, max_freq, pfc_avg_slope, 
+        avg_entropy, agg_entropy, snr, delta_voice_freq, delta_voice_inflexion,
+        delta_voice_entropy), 
+      mean, 
+      .names = "mean_{.col}",
+      na.rm = TRUE,
+    ),
+    .groups = "drop"
+  )
+```
+
+Obvious takeaways from per subject and session **naive** summaries:
+
+- *Alex* produced similar number of calls in the two sessions, which have
+similar recording duration.
+- *Riet*'s sessions quite dissimilar in terms of number of calls relative to
+recording duration. Further exploration will reveal the reason(s) behind this.
+- Calls produced by *Riet* last longer than those of *Alex*.
+- *Riet* calls show, on average, lower levels of low frequency and maximum frequency
+than *Alex*.
+- No substantial differences (at least for a non-specialist!) between sessions
+and subjects in the remaining acoustic variables.
+
+
+### Call-specific measurements through recording time
+
+```{r}
+#| fig-width: 8
+#| fig-height: 12
+
+data %>%
+  select(subject:begin_time, low_freq, high_freq, max_freq:snr) %>%
+  pivot_longer(cols = -c(subject, session, begin_time), names_to = "variable") %>%
+  ggplot() +
+  geom_line(aes(x = begin_time, y = value, color = session)) +
+#  geom_point(aes(x = begin_time, y = value, color = session)) +
+  facet_grid(variable~subject, scales = "free") +
+  scale_color_manual(values = col_pal)
+
+```
+
+- Discrepancies found earlier between *Riet*'s sessions in nr. of calls
+relative to recording duration explained by a large time gap between the first
+few calls and subsequent calls during session 1.
+- Otherwise, no clear differences between sessions for the displayed variables.
+- *Alex*'s calls appear to show larger variability in `high_freq`,
+`low_freq`, `pfc_avg_slope` and `sur`.
+
+
+
+
+### Call acoustic properties vs. call duration
+
+```{r}
+#| fig-width: 8
+#| fig-height: 12
+
+data %>%
+  select(subject, session, delta_time, low_freq, high_freq, max_freq:snr) %>%
+  pivot_longer(cols = -c(subject, session, delta_time), names_to = "variable") %>%
+  ggplot() +
+  geom_point(aes(x = delta_time, y = value, color = session)) +
+  facet_grid(variable~subject, scales = "free_y") +
+  scale_color_manual(values = col_pal)
+
+```
+
+- No obvious relationship between displayed variables and call duration
+- *Alex*'s shorter call duration is highlighted again, as well as the wider
+distribution of `high_freq`, `low_freq`, `pfc_avg_slope` and `sur` values.
+
+
+
+### Change in call duration vs. change in entropy, frequency and inflection
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+data %>%
+  select(subject, session, delta_duration, delta_voice_freq:delta_voice_entropy) %>%
+  drop_na() %>%
+  pivot_longer(cols = -c(subject, session, delta_duration), names_to = "variable") %>%
+  ggplot() +
+  geom_point(aes(x = delta_duration, y = value, color = session)) +
+  facet_grid(variable~subject, scales = "free_y") +
+  scale_color_manual(values = col_pal)
+```
+
+- No obvious trend between change in call duration and change in entropy,
+frequency or inflection.
+- Change in call duration between consecutive calls less variable in
+*Alex*'s calls than those from *Riet* (as expected given *Alex*'s shorter calls).
+- Change in voice inflection between consecutive calls is less variable in
+*Riet*'s calls.
+
+
+### Slope Vs Entropy
+
+```{r}
+#| fig-width: 10
+#| fig-height: 4
+
+data %>%
+  ggplot(aes(x = avg_entropy, y = pfc_avg_slope, color = session)) +
+  geom_point() +
+  facet_wrap(~subject) +
+  scale_color_manual(values = col_pal)
+```
+
+- No clear relationship between slope (voice inflection) and entropy.
