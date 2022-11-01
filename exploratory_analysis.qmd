@@ -23,8 +23,6 @@ col_pal <- met.brewer("Lakota", n = 2)
 ```
 
 
-
-
 Rough and overall look at the data to get familiar with variables, basic
 trends and spot any odd values.
 
@@ -54,7 +52,7 @@ Variables can be broadly grouped into:
 - Change from preceding call
   - `ΔVoice Freq`: in maximum frequency
   - `ΔVoice Inflexion`: in voice inflection
-  -  `ΔVoice Entropy`: in entropy
+  - `ΔVoice Entropy`: in entropy
 
 
 
@@ -71,9 +69,10 @@ Variables can be broadly grouped into:
 data <- data %>% 
   group_by(File) %>%
   # add column with change in call duration
+  rename(duration = `Delta Time`) %>%
   mutate(
-    delta_duration = `Delta Time` - lag(`Delta Time`), 
-    .after = `Delta Time`
+    delta_duration = duration - lag(duration), 
+    .after = duration
   ) %>%
   group_by(Subject) %>%
   # add session number
@@ -89,6 +88,59 @@ data <- data %>%
 #head(data)
 
 ```
+
+- Furthermore, adding columns with percentage change for the main variables.
+
+  - Undefined/Infinite values are produced when variables are 0, i.e. when
+  computing change from 0 (due to denominator of zero). Infinite values cause
+  problems in plotting, so they need to be treated carefully. Perhaps the most
+  sensible option is to replace `Inf` values with `NA`s, effectively assuming
+  that percentage change relative to 0 is undefined and therefore meaningless.
+  As stated somewhere among infinite internet wisdom: "Going from 'not being'
+  into 'being' is not a change of being, it is instead creation of being."
+  (internet wisdom).
+  
+  - For zero-rich data, the absolute difference is a more sensible metric of
+  change.
+
+
+```{r}
+# --------------------------------------------------------- #
+# ---     Data processing for pctage change plots       -----
+# --------------------------------------------------------- #
+
+# compute percentage of change between consecutive calls in terms of duration,
+# frequency, inflection and entropy
+data <- data |>
+  group_by(file)|>
+  dplyr::arrange(begin_time, .by_group = TRUE) |>
+  mutate(
+    pc_duration = (duration - lag(duration))/lag(duration) * 100,
+    pc_voice_freq = (max_freq - lag(max_freq))/lag(max_freq) * 100,
+    pc_voice_inflexion = (pfc_avg_slope - lag(pfc_avg_slope))/lag(pfc_avg_slope) * 100,
+    pc_voice_entropy = (avg_entropy - lag(avg_entropy))/lag(avg_entropy)* 100
+  ) |>
+  ungroup()
+
+
+# Control check of consistency between delta and pctage change
+# For correct comparison, the chunk above needs to be run *without* the mutate() step
+data |>
+  transmute(
+    test_duration = (pc_duration * lag(duration)/100 - (delta_duration)),
+    test_freq = (pc_voice_freq * lag(max_freq)/100 - (delta_voice_freq)),
+    test_infl = (pc_voice_inflexion * lag(pfc_avg_slope)/100 - (delta_voice_inflexion)),
+    test_entropy = (pc_voice_entropy * lag(avg_entropy)/100 - (delta_voice_entropy))
+  ) |>
+  summarise(across(everything(), sum, na.rm = TRUE))
+
+
+# Replace Inf with NAs
+data <- data |>
+  mutate(across(pc_voice_freq:pc_voice_entropy, ~ifelse(is.infinite(.), NA, .)))
+
+```
+
 
 
 ```{r}
@@ -112,7 +164,7 @@ data %>%
     session_duration = max(end_time), # session duration
     #calls_per_min = n_calls/session_duration * 60, # nr calls/minute
     across(
-      c(delta_time, low_freq, high_freq, max_freq, pfc_avg_slope, 
+      c(duration, low_freq, high_freq, max_freq, pfc_avg_slope, 
         avg_entropy, agg_entropy, snr, delta_voice_freq, delta_voice_inflexion,
         delta_voice_entropy), 
       mean, 
@@ -170,10 +222,10 @@ few calls and subsequent calls during session 1.
 #| fig-height: 12
 
 data %>%
-  select(subject, session, delta_time, low_freq, high_freq, max_freq:snr) %>%
-  pivot_longer(cols = -c(subject, session, delta_time), names_to = "variable") %>%
+  select(subject, session, duration, low_freq, high_freq, max_freq:snr) %>%
+  pivot_longer(cols = -c(subject, session, duration), names_to = "variable") %>%
   ggplot() +
-  geom_point(aes(x = delta_time, y = value, color = session)) +
+  geom_point(aes(x = duration, y = value, color = session)) +
   facet_grid(variable~subject, scales = "free_y") +
   scale_color_manual(values = col_pal)
 
