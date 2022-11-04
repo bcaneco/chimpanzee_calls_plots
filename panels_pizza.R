@@ -16,40 +16,6 @@ dt <- read_csv("data/calls_data.csv", show_col_types = FALSE) %>%
 
 sapply(list.files("R/", full.names = TRUE), source)
 
-
-# # --------------------------------------------------------- #
-# # ---     Data processing for pctage change plots       -----
-# # --------------------------------------------------------- #
-# 
-# # compute percentage of change between consecutive calls in terms of duration,
-# # frequency, inflection and entropy
-# dt <- dt |>
-#   group_by(file)|>
-#   dplyr::arrange(begin_time, .by_group = TRUE) |>
-#   mutate(
-#     pc_duration = (duration - lag(duration))/lag(duration) * 100,
-#     pc_voice_freq = (max_freq - lag(max_freq))/lag(max_freq) * 100,
-#     pc_voice_inflexion = (pfc_avg_slope - lag(pfc_avg_slope))/lag(pfc_avg_slope) * 100,
-#     pc_voice_entropy = (avg_entropy - lag(avg_entropy))/lag(avg_entropy)* 100
-#   ) |>
-#   mutate(across(pc_voice_freq:pc_voice_entropy, ~ifelse(is.infinite(.), NA, .))) |>
-#   ungroup()
-# 
-# 
-# 
-# # Control check of consistency between delta and pctage change
-# # For correct comparison, the chunk above needs to be run *without* the mutate() step
-# dt |>
-#   transmute(
-#     test_duration = (pc_duration * lag(duration)/100 - (delta_duration)),
-#     test_freq = (pc_voice_freq * lag(max_freq)/100 - (delta_voice_freq)),
-#     test_infl = (pc_voice_inflexion * lag(pfc_avg_slope)/100 - (delta_voice_inflexion)),
-#     test_entropy = (pc_voice_entropy * lag(avg_entropy)/100 - (delta_voice_entropy))
-#   ) |>
-#   summarise(across(everything(), sum, na.rm = TRUE))
-
-
-
 # --------------------------------- #
 # ---    Global variables      -----
 # --------------------------------- #
@@ -87,7 +53,7 @@ p2 <- dt |>
     offset = pi/8,
     fill_slices = TRUE,
     plot_points = TRUE,
-    add_nr_points = FALSE,
+    add_nr_points = TRUE,
     #cheking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
@@ -205,17 +171,16 @@ p1 + p3 + p4
 
 build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,   
                               fill_slices = TRUE, plot_points = TRUE,
-                              pnt_col_id = NULL, pnt_col_key = NULL,
-                              add_nr_points = TRUE, title = NA, fixed_lims = FALSE,
+                              pnt_col_id = NULL, pnt_col_key = NULL, lolli = FALSE,
+                              title = NA, fixed_lims = FALSE,
                               xlab = NA, ylab = NA, fill_pal = MetBrewer::met.brewer("Hokusai2")
                               ){
-  
   # overall plot
   p_all <- data |>
     pizza_plot(x = {{x}}, y = {{y}}, n_slices = n_slices, offset = pi/n_slices,
                fill_slices = fill_slices, plot_points = plot_points, 
-               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key,
-               add_nr_points = add_nr_points, 
+               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, lolli = lolli,
+               add_nr_points = TRUE, 
                title = "All Sessions", 
                xlab = "", ylab = ylab, fill_pal = fill_pal
     )
@@ -237,8 +202,8 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
     filter(subject == "Riet") |>
     pizza_plot(x = {{x}}, y = {{y}}, n_slices = n_slices, offset = pi/n_slices,
                fill_slices = fill_slices, plot_points = plot_points, 
-               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, 
-               add_nr_points = add_nr_points, xlab = "", ylab = "", fill_pal = fill_pal, 
+               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, lolli = lolli,
+               add_nr_points = TRUE, xlab = "", ylab = "", fill_pal = fill_pal, 
                ylim = ylim, xlim = xlim,
                title = "Riet Sessions")
   
@@ -247,8 +212,8 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
     filter(subject == "Alex") |>
     pizza_plot(x = {{x}}, y = {{y}}, n_slices = n_slices, offset = pi/n_slices,
                fill_slices = fill_slices, plot_points = plot_points, 
-               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key,
-               add_nr_points = add_nr_points, fill_pal = fill_pal, xlab = "", ylab = "", 
+               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, lolli = lolli,
+               add_nr_points = TRUE, fill_pal = fill_pal, xlab = "", ylab = "", 
                ylim = ylim, xlim = xlim,
                title = "Alex Sessions")
   
@@ -257,8 +222,8 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
     filter(subject == "Riet", session == 1) |>
     pizza_plot(x = {{x}}, y = {{y}}, n_slices = n_slices, offset = pi/n_slices,
                fill_slices = fill_slices, plot_points = plot_points, pnt_size = 0.8,
-               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key,
-               add_nr_points = add_nr_points, fill_pal = fill_pal, xlab = "", ylab = "", 
+               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, lolli = lolli,
+               add_nr_points = FALSE, fill_pal = fill_pal, xlab = "", ylab = "", 
                ylim = ylim, xlim = xlim,
                title = "RS 1")
   
@@ -267,8 +232,8 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
     filter(subject == "Riet", session == 2) |>
     pizza_plot(x = {{x}}, y = {{y}}, n_slices = n_slices, offset = pi/n_slices,
                fill_slices = fill_slices, plot_points = plot_points, pnt_size = 0.8,
-               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key,
-               add_nr_points = add_nr_points, fill_pal = fill_pal, xlab = "", ylab = "", 
+               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, lolli = lolli,
+               add_nr_points = FALSE, fill_pal = fill_pal, xlab = "", ylab = "", 
                ylim = ylim, xlim = xlim,
                title = "RS 2")
   
@@ -278,8 +243,8 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
     filter(subject == "Alex", session == 1) |>
     pizza_plot(x = {{x}}, y = {{y}}, n_slices = n_slices, offset = pi/n_slices,
                fill_slices = fill_slices, plot_points = plot_points, pnt_size = 0.8,
-               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key,
-               add_nr_points = add_nr_points, fill_pal = fill_pal, xlab = "", ylab = "",
+               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, lolli = lolli,
+               add_nr_points = FALSE, fill_pal = fill_pal, xlab = "", ylab = "",
                ylim = ylim, xlim = xlim,
                title = "AS 1")
   
@@ -288,8 +253,8 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
     filter(subject == "Alex", session == 2) |>
     pizza_plot(x = {{x}}, y = {{y}}, n_slices = n_slices, offset = pi/n_slices,
                fill_slices = fill_slices, plot_points = plot_points, pnt_size = 0.8,
-               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key,
-               add_nr_points = add_nr_points, fill_pal = fill_pal, xlab = "", ylab = "", 
+               pnt_col_id = {{pnt_col_id}}, pnt_col_key = pnt_col_key, lolli = lolli,
+               add_nr_points = FALSE, fill_pal = fill_pal, xlab = "", ylab = "", 
                ylim = ylim, xlim = xlim,
                title = "AS 2")
   
@@ -323,6 +288,7 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
 # --- Delta Duration Vs. Delta Frequency   ------
 # --------------------------------------------- #
 
+# with points
 build_pizza_panel(
   data = dt, 
   x = delta_duration, 
@@ -332,7 +298,6 @@ build_pizza_panel(
   plot_points = TRUE, 
   pnt_col_id = subject, 
   pnt_col_key = pnt_col_key,
-  add_nr_points = FALSE, 
   fixed_lims = FALSE,
   xlab = expression(Delta ~ "Duration (secs)"),
   ylab = expression(Delta ~ "Max Frequency (Hz)"),
@@ -345,76 +310,79 @@ ggsave("outputs/delta_duration_vs_delta_maxfreq_pizza.png",
 
 
 
-
-
-# ---------------------------------------------------- #
-# --- Delta Duration Vs. Delta Voice Inflection   ------
-# ---------------------------------------------------- #
-
+# origin-lollipop style
 build_pizza_panel(
   data = dt, 
   x = delta_duration, 
-  y = delta_voice_inflexion,
+  y = delta_voice_freq,
   n_slices = 8,  
   fill_slices = TRUE, 
   plot_points = TRUE, 
   pnt_col_id = subject, 
-  pnt_col_key = pnt_col_key,
-  add_nr_points = FALSE, 
+  pnt_col_key = pnt_col_key, 
+  lolli = TRUE,
   fixed_lims = FALSE,
   xlab = expression(Delta ~ "Duration (secs)"),
-  ylab = expression(Delta ~ "Voice Inflection (Hz)"),
+  ylab = expression(Delta ~ "Max Frequency (Hz)"),
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/delta_duration_vs_delta_voice_inflection_pizza.png", 
+ggsave("outputs/delta_duration_vs_delta_maxfreq_pizza_lolli.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
 
 
-
 # ---------------------------------------------------- #
-# ---   Delta Duration Vs. Delta Voice Entropy   ------
+# ---     Delta PC Slope Vs. Delta Entropy        ------
 # ---------------------------------------------------- #
 
 build_pizza_panel(
   data = dt, 
-  x = delta_duration, 
+  x = delta_voice_inflexion, 
   y = delta_voice_entropy,
   n_slices = 8,  
   fill_slices = TRUE, 
   plot_points = TRUE, 
   pnt_col_id = subject, 
   pnt_col_key = pnt_col_key,
-  add_nr_points = FALSE, 
   fixed_lims = FALSE,
-  xlab = expression(Delta ~ "Duration (secs)"),
-  ylab = expression(Delta ~ "Voice Entropy (Hz)"),
+  xlab = expression(Delta ~ "Pitch Counter Slope (Hz)"),
+  ylab = expression(Delta ~ "Entropy (Hz)"),
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/delta_duration_vs_delta_voice_entropy_pizza.png", 
+ggsave("outputs/delta_pcslope_vs_delta_entropy_pizza.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
+
+
+# origin-lollipop style
+build_pizza_panel(
+  data = dt, 
+  x = delta_voice_inflexion, 
+  y = delta_voice_entropy,
+  n_slices = 8,  
+  fill_slices = TRUE, 
+  plot_points = TRUE, 
+  pnt_col_id = subject, 
+  pnt_col_key = pnt_col_key, 
+  lolli = TRUE,
+  fixed_lims = FALSE,
+  xlab = expression(Delta ~ "Pitch Counter Slope (Hz)"),
+  ylab = expression(Delta ~ "Entropy (Hz)"),
+  fill_pal = rcartocolor::carto_pal(name = "Teal")
+) 
+
+ggsave("outputs/delta_pcslope_vs_delta_entropy_pizza_lolli.png", 
+       device = "png", width = 17, height = 10, units = "in", scale = 1)
+
+
 
 
 
 # -------------------------------------------------------- #
 # ---  Pct Change Duration Vs. Pct Change Frequency   ------
 # --------------------------------------------------------- #
-
-# dt |>
-#   pizza_plot(
-#     x = pc_duration, 
-#     y = pc_voice_freq,
-#     n_slices = 8,
-#     offset = pi/8,
-#     fill_slices = TRUE,
-#     plot_points = TRUE,
-#     add_nr_points = FALSE, 
-#     pnt_col_id = subject, cheking_plot = TRUE,
-#     pnt_col_key = c("Riet" = "red", "Alex" = "black"),
-#   ) 
 
 build_pizza_panel(
   data = dt, 
@@ -425,8 +393,6 @@ build_pizza_panel(
   plot_points = TRUE, 
   pnt_col_id = subject, 
   pnt_col_key = pnt_col_key,
-  #pnt_col_key = c("Riet" = "olivedrab", "Alex" = "black"),
-  add_nr_points = FALSE, 
   fixed_lims = FALSE,
   xlab = "Change in Duration (%)",
   ylab = "Change in Max Frequency (%)",
@@ -437,56 +403,71 @@ ggsave("outputs/pctchange_duration_vs_pctchange_maxfreq_pizza.png",
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
-
-# --------------------------------------------------------------- #
-# --- Pct Change Duration Vs. Pct Change Voice Inflection   ------
-# --------------------------------------------------------------- #
-
+# origin-lollipop style
 build_pizza_panel(
   data = dt, 
   x = pc_duration, 
-  y = pc_voice_inflexion,
+  y = pc_voice_freq,
   n_slices = 8,  
   fill_slices = TRUE, 
   plot_points = TRUE, 
   pnt_col_id = subject, 
   pnt_col_key = pnt_col_key,
-  add_nr_points = FALSE, 
+  lolli = TRUE,
   fixed_lims = FALSE,
   xlab = "Change in Duration (%)",
-  ylab = "Change in Voice Inflection (%)",
+  ylab = "Change in Max Frequency (%)",
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/pctchange_duration_vs_pctchange_voice_inflection_pizza.png", 
+ggsave("outputs/pctchange_duration_vs_pctchange_maxfreq_pizza_lolli.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
-# ------------------------------------------------------------- #
-# ---   Pct Change Duration Vs. Pct Change Voice Entropy   ------
-# ------------------------------------------------------------- #
+
+
+# --------------------------------------------------------------- #
+# ---      Pct Change PC Slope Vs. Pct Change Entropy           --
+# --------------------------------------------------------------- #
 
 build_pizza_panel(
   data = dt, 
-  x = pc_duration, 
+  x = pc_voice_inflexion, 
   y = pc_voice_entropy,
-  n_slices = 8,  
+  n_slices = 8,
   fill_slices = TRUE, 
   plot_points = TRUE, 
   pnt_col_id = subject, 
   pnt_col_key = pnt_col_key,
-  add_nr_points = FALSE, 
   fixed_lims = FALSE,
-  xlab = "Change in Duration (%)",
-  ylab = "Change in Voice Entropy (%)",
+  xlab = "Change in Pitch Contour Slope (%)",
+  ylab = "Change in Entropy (%)",
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/pctchange_duration_vs_pctchange_voice_entropy_pizza.png", 
+ggsave("outputs/pctchange_pcslope_vs_pctchange_entropy_pizza.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
 
+build_pizza_panel(
+  data = dt, 
+  x = pc_voice_inflexion, 
+  y = pc_voice_entropy,
+  n_slices = 8,
+  fill_slices = TRUE, 
+  plot_points = TRUE, 
+  pnt_col_id = subject, 
+  pnt_col_key = pnt_col_key, 
+  lolli = TRUE,
+  fixed_lims = FALSE,
+  xlab = "Change in Pitch Contour Slope (%)",
+  ylab = "Change in Entropy (%)",
+  fill_pal = rcartocolor::carto_pal(name = "Teal")
+) 
+
+ggsave("outputs/pctchange_pcslope_vs_pctchange_entropy_pizza_lolli.png", 
+       device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
 

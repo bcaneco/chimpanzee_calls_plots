@@ -114,40 +114,22 @@ ggsave("outputs/delta_duration_vs_delta_maxfreq_rays.png",
 
 
 # ---------------------------------------------------- #
-# --- Delta Duration Vs. Delta Voice Inflection   ------
+# ---     Delta PC Slope Vs. Delta Entropy        ------
 # ---------------------------------------------------- #
 
 build_rays_panel(
-  data = dt, 
-  x = delta_duration, 
-  y = delta_voice_inflexion,
-  n_slices = 8,  
-  xlab = expression(Delta ~ "Duration (secs)"),
-  ylab = expression(Delta ~ "Voice Inflection (Hz)")
-) 
-
-
-ggsave("outputs/delta_duration_vs_delta_voice_inflection_rays.png", 
-       device = "png", width = 17, height = 10, units = "in", scale = 1)
-
-
-
-# ---------------------------------------------------- #
-# ---   Delta Duration Vs. Delta Voice Entropy   ------
-# ---------------------------------------------------- #
-
-build_rays_panel(
-  data = dt, 
-  x = delta_duration, 
+  data = dt,
+  x = delta_voice_inflexion, 
   y = delta_voice_entropy,
   n_slices = 8,  
-  xlab = expression(Delta ~ "Duration (secs)"),
-  ylab = expression(Delta ~ "Voice Entropy (Hz)")
+  xlab = expression(Delta ~ "Pitch Counter Slope (Hz)"),
+  ylab = expression(Delta ~ "Entropy (Hz)"),
 ) 
 
 
-ggsave("outputs/delta_duration_vs_delta_voice_entropy_rays.png", 
+ggsave("outputs/delta_pcslope_vs_delta_entropy_rays.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
+
 
 
 
@@ -161,7 +143,7 @@ build_rays_panel(
   y = pc_voice_freq,
   n_slices = 8,  
   xlab = "Change in Duration (%)",
-  ylab = "Change in Max Frequency (%)",
+  ylab = "Change in Max Frequency (%)"
 ) 
 
 ggsave("outputs/pctchange_duration_vs_pctchange_maxfreq_rays.png", 
@@ -169,37 +151,22 @@ ggsave("outputs/pctchange_duration_vs_pctchange_maxfreq_rays.png",
 
 
 
-# --------------------------------------------------------------- #
-# --- Pct Change Duration Vs. Pct Change Voice Inflection   ------
-# --------------------------------------------------------------- #
-
-build_rays_panel(
-  data = dt, 
-  x = pc_duration, 
-  y = pc_voice_inflexion,
-  n_slices = 8,  
-  xlab = "Change in Duration (%)",
-  ylab = "Change in Voice Inflection (%)",
-) 
-
-ggsave("outputs/pctchange_duration_vs_pctchange_voice_inflection_rays.png", 
-       device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
 
 # ------------------------------------------------------------- #
-# ---   Pct Change Duration Vs. Pct Change Voice Entropy   ------
+# ---   Pct Change PC Slope Vs. Pct Change Voice Entropy   ------
 # ------------------------------------------------------------- #
 
 build_rays_panel(
   data = dt, 
-  x = pc_duration, 
+  x = pc_voice_inflexion, 
   y = pc_voice_entropy,
   n_slices = 8,  
-  xlab = "Change in Duration (%)",
-  ylab = "Change in Voice Entropy (%)",
+  xlab = "Change in Pitch Contour Slope (%)",
+  ylab = "Change in Entropy (%)"
 ) 
 
-ggsave("outputs/pctchange_duration_vs_pctchange_voice_entropy_rays.png", 
+ggsave("outputs/pctchange_pcslope_vs_pctchange_entropy_rays.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 

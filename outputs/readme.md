@@ -8,7 +8,7 @@ values acoustic (e.g. Voice Entropy), these plots intend to describe the
 movement in the acoustic space of consecutive calls.
 
 
-#### Directional Spokes ("*duration_vs_xxx_snl_spokes*")
+#### Directional Spokes 
 
 - This type of plot use arrows to describe the direction of subsequent calls in
 the acoustic space - i.e. an arrow represents a call and the direction of the
@@ -16,10 +16,9 @@ cell containing the subsequent call.
 
 - Comments:
 
-  - There is quite a lot of overplotting due to the large number of subsequent
-  calls going in the same direction (given the specified cell size). So, the
-  opacity of the arrows can be interpreted as traffic intensity, with opaquer
-  arrows indicating higher traffic.
+  - The colour of the arrows map the nr. of occurrences in the given direction,
+  conveying a sense of traffic intensity (i.e. darker shades indicate larger
+  number of transitions in the same direction).
   
   - As seen on the exploratory analysis, Alex's calls on both sessions were much
   shorter in duration than Riet's calls. This causes Ale's features to get
@@ -29,10 +28,10 @@ cell containing the subsequent call.
   x-scales (i.e scale based on inherent data) to get more detail of the
   movements occurring in each session.
   
-![](duration_vs_entropy_snl_spokes.png "Example of Directional spoke plot: Duration Vs Entropy")
+![](duration_vs_maxfreq_snl_spokes.png "Example of Directional spoke plot: Duration Vs Frequency")
 
 
-#### Directional Tracks ("*duration_vs_xxx_snl_tracks*")
+#### Directional Tracks
 
 - These plots show the actual connections between each cells and subsequent cell.
 To help vizualization, arrows are colored to represent the direction of movement
@@ -54,7 +53,7 @@ directions (i.e. E, NE, N, NW, W, SW, S, SE).
   the current spacial arrangement of the panels.
   
 
-![](duration_vs_entropy_snl_tracks.png "Example of Directional Tracks plot: Duration Vs Entropy")
+![](duration_vs_maxfreq_snl_tracks.png "Example of Directional Tracks plot: Duration Vs Entropy")
   
   
 
@@ -107,12 +106,13 @@ pushed by a couple of points on the opposite side of the slice. Sure, the label
 displaying a small number of points might caution the user to be careful with strong
 assumptions, but still the risk of misinterpretation is non-negligible.
 
-That's the reason why the middle plot was chosen for the main panels. Having
-points displayed makes the "n" labels somehow redundant, while colored slices
-was though to be a good visual aid.
+The choice ended up falling to the middle plot as points might help mitigate the
+interpolation issue. Having colored slices was thought to be a good visual aid
+(and prettier), and adding the "n" labels provide total clarity of number of
+observations comprised in each slice.
 
 
-#### Absolute change ("*delta_duration_vs_delta_xxx_pizza*")
+#### Absolute change
 
 Displaying change between consecutive calls in terms of absolute differences.
 
@@ -123,14 +123,14 @@ Some further considerations:
   
   - **Important Note**: The axes scales of each plot is determined by their
   inherent data. So the slicing-up of the plotting region and associated
-  grouping of points is sspecific to the spread of the plotted data.
+  grouping of points is specific to the spread of the plotted data.
 
 
 ![](delta_duration_vs_delta_maxfreq_pizza.png "Example of 'Pizza' plot: delta Duration Vs delta Frequency")
 
 
 
-#### Percentage change ("*pctchange_duration_vs_pctchange_xxx_pizza*")
+#### Percentage change
 
 Displaying percentage change between consecutive calls.
 
@@ -153,15 +153,15 @@ predominantly on the variable mapped by the x-axis.
 
 
 
-#### Absolute change ("*delta_duration_vs_delta_xxx_rays*")
+#### Absolute change
 
 Displaying absolute change between consecutive calls.
 
-![](delta_duration_vs_delta_voice_entropy_rays.png "Example of 'Rays' plot: delta Duration Vs delta entropy")
+![](delta_duration_vs_delta_maxfreq_rays.png "Example of 'Rays' plot: delta Duration Vs delta entropy")
 
 
-#### Percentage change ("*pctchange_duration_vs_pctchange_xxx_rays*")
+#### Percentage change
 
 Displaying percentage change between consecutive calls.
 
-![](pctchange_duration_vs_pctchange_voice_entropy_rays.png "Example of 'Rays' plot: % change in Duration Vs % change in Entropy")
+![](pctchange_duration_vs_pctchange_maxfreq_rays.png "Example of 'Rays' plot: % change in Duration Vs % change in Entropy")

@@ -11,7 +11,8 @@
 snl_plot <- function(data, x, y, time, recording_id = NULL,
                      ncx = 20, ncy = ncx, xlim = NULL, ylim = NULL, 
                      arrow_fctr = 1, cellcent_fct = 1, axis_nbreaks_fct = 1,
-                     type = "spokes", xlab = NULL, ylab = NULL, title = NULL){
+                     type = "spokes", add_freq_col = FALSE, xlab = NULL, 
+                     ylab = NULL, title = NULL){
   
   # browser()
   
@@ -75,6 +76,12 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
           sbsq_cell_x, sbsq_cell_y, cell_xmin, cell_ymin, cell_xmax, cell_ymax
         )
       )
+    
+    if(add_freq_col){
+      data <- data |>
+        group_by(cell_x, cell_y, sbsq_cell_angle, spoke_radius) |>
+        summarise(n = n(), .groups = "keep")
+    }
   }
   
   
@@ -116,21 +123,41 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
 
   # Spoke plot
   if(type == "spokes"){
-    p <- p +
-      ggplot2::geom_spoke(
-        data = data,
-        ggplot2::aes(angle = sbsq_cell_angle, radius = spoke_radius*0.9), 
-        size = 0.7,
-        arrow = arrow(length = unit(0.008 * arrow_fctr, "npc"), type = "closed", angle = 20),
-        alpha = 0.25
-        #arrow = arrow(length = unit(0.08, "inches"), type = "closed", angle = 20),
-        #col = "#575cf7"
-      ) #+
-      # ggplot2::geom_point(
-      #   data = data,
-      #   ggplot2::aes(x = cell_x, y = cell_y), col = "#575cf7", size = 1
-      # )
     
+    if(!add_freq_col){
+      p <- p +
+        ggplot2::geom_spoke(
+          data = data,
+          ggplot2::aes(angle = sbsq_cell_angle, radius = spoke_radius*0.9),
+          size = 0.7,
+          arrow = arrow(length = unit(0.008 * arrow_fctr, "npc"), type = "closed", angle = 20),
+          alpha = 0.25
+        ) #+
+        # ggplot2::geom_point(
+        #   data = data,
+        #   ggplot2::aes(x = cell_x, y = cell_y), col = "#575cf7", size = 1
+        # )
+    }else{
+      p <- p +
+        ggplot2::geom_spoke(
+          data = data,
+          ggplot2::aes(angle = sbsq_cell_angle, radius = spoke_radius*0.9, col = n), 
+          size = 0.7,
+          arrow = arrow(length = unit(0.008 * arrow_fctr, "npc"), type = "closed", angle = 20)
+        ) +
+        # scale_colour_gradientn(
+        #   name = "Freq.",
+        #   colours = c(rcartocolor::carto_pal(name = "DarkMint")[-c(1, 2)], "#000501"),
+        #   limits = c(1, 20)
+        # )
+        scale_colour_stepsn(
+          name = "Freq.",
+          #colours = c("grey85", "grey42", "grey1"),
+          #colours = c(MetBrewer::met.brewer("Hokusai2")[-1], "#000501"),
+          colours = c(rcartocolor::carto_pal(name = "DarkMint")[-c(1, 2)], "#000501"),
+          breaks = seq(5, 20, 5), 
+          limits = c(1, 30))
+    }
   }
   
   # segment plot
@@ -336,6 +363,7 @@ pts_in_cell <- function(xy, cell_lims){
   dplyr::between(x, xmin, xmax) & 
     dplyr::between(y, ymin, ymax)
 }
+
 
 
 

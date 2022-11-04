@@ -14,6 +14,7 @@
 pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, title = NULL,
                        cheking_plot = FALSE, fill_slices = TRUE,
                        plot_points = FALSE,  pnt_col_id = NULL, pnt_col_key = ggplot2::waiver(), pnt_size = 1,
+                       lolli = FALSE,
                        add_nr_points = TRUE, fill_pal = MetBrewer::met.brewer("Hokusai2"),
                        xlim = NULL, ylim = NULL,
                        offset = 0){
@@ -262,6 +263,19 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
       show.legend = FALSE
     ) +
       scale_color_manual(values = pnt_col_key)
+    
+    if(lolli){
+      p <- p +
+        ggplot2::geom_segment(
+          data =  data,
+          aes(x = 0, y = 0, xend = {{x}}, yend = {{y}}, 
+              col = {{pnt_col_id}}
+              ),
+          size = 0.5,
+          show.legend = FALSE,
+          alpha = 0.2
+        )
+    }
   }
   
   # option to add labels with nr of points in each sclice

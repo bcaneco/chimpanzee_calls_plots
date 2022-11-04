@@ -165,7 +165,7 @@ rays_plot <- function(data, x, y, n_slices = 8, offset = pi/n_slices,
     p <- p +
       ggplot2::geom_segment(
         data = slice_pnts, 
-        aes(x = x_orig, y = x_orig, xend = x, yend = y, colour = slice_id),
+        aes(x = x_orig, y = y_orig, xend = x, yend = y, colour = slice_id),
         size = 0.5,
         show.legend = FALSE
       ) +
@@ -182,7 +182,7 @@ rays_plot <- function(data, x, y, n_slices = 8, offset = pi/n_slices,
   }else{
     p <- p +
       ggplot2::geom_segment(
-        aes(x = x_orig, y = x_orig, xend = {{x}}, yend = {{y}}),
+        aes(x = x_orig, y = y_orig, xend = {{x}}, yend = {{y}}),
         color = "grey55",
         size = 0.2
       ) +
