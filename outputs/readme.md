@@ -28,7 +28,13 @@ cell containing the subsequent call.
   x-scales (i.e scale based on inherent data) to get more detail of the
   movements occurring in each session.
   
-![](duration_vs_maxfreq_snl_spokes.png "Example of Directional spoke plot: Duration Vs Frequency")
+  
+##### Duration Vs Frequency  
+![](duration_vs_maxfreq_snl_spokes.png "Duration Vs Frequency: Spokes")
+
+
+##### Entropy Vs Pitch Contour Slope  
+![](pcslope_vs_entropy_snl_spokes.png "Entropy Vs PCS: Spokes")
 
 
 #### Directional Tracks
@@ -53,7 +59,13 @@ directions (i.e. E, NE, N, NW, W, SW, S, SE).
   the current spacial arrangement of the panels.
   
 
-![](duration_vs_maxfreq_snl_tracks.png "Example of Directional Tracks plot: Duration Vs Entropy")
+
+##### Duration Vs Frequency  
+![](duration_vs_maxfreq_snl_tracks.png "Duration Vs Frequency: Tracks")
+
+
+##### Entropy Vs Pitch Contour Slope  
+![](pcslope_vs_entropy_snl_tracks.png "Entropy Vs PCS: Tracks")
   
   
 
@@ -126,7 +138,26 @@ Some further considerations:
   grouping of points is specific to the spread of the plotted data.
 
 
-![](delta_duration_vs_delta_maxfreq_pizza.png "Example of 'Pizza' plot: delta Duration Vs delta Frequency")
+##### $\Delta$ Duration Vs $\Delta$ Frequency
+
+(i) Observations as points
+    
+![](delta_duration_vs_delta_maxfreq_pizza.png "delta Duration Vs delta Frequency: Pizza with points")
+
+(ii) Observations as lollipops
+    
+![](delta_duration_vs_delta_maxfreq_pizza_lolli.png "delta Duration Vs delta Frequency: Pizza with lollipops")
+
+
+##### $\Delta$ Entropy Vs $\Delta$ Pitch Contour Slope  
+
+(i) Observations as points
+
+![](delta_pcslope_vs_delta_entropy_pizza.png "Delta Entropy Vs Delta PCS: Pizza with points")
+
+(ii) Observations as lollipops
+
+![](delta_pcslope_vs_delta_entropy_pizza_lolli.png "Delta Entropy Vs Delta PCS: Pizza with lollipops")
 
 
 
@@ -134,9 +165,26 @@ Some further considerations:
 
 Displaying percentage change between consecutive calls.
 
+##### %-change Duration Vs %-change Frequency
 
-![](pctchange_duration_vs_pctchange_maxfreq_pizza.png "Example of 'Pizza' plot: % change in Duration Vs % change in Entropy")
+(i) Observations as points
 
+![](pctchange_duration_vs_pctchange_maxfreq_pizza.png "% change in Duration Vs % change in Frequency: Pizza with points")
+
+(ii) Observations as lollipops
+
+![](pctchange_duration_vs_pctchange_maxfreq_pizza_lolli.png "% change in Duration Vs % change in Frequency: Pizza with lollipops")
+
+
+##### %-change Entropy Vs %-change Pitch Contour Slope
+
+(i) Observations as points
+
+![](pctchange_pcslope_vs_pctchange_entropy_pizza.png "% change in Entropy Vs % change in PCS: Pizza with points")
+
+(ii) Observations as lollipops
+
+![](pctchange_pcslope_vs_pctchange_entropy_pizza_lolli.png "% change in Entropy Vs % change in PCS: Pizza with lollipops")
 
 
 
@@ -157,11 +205,26 @@ predominantly on the variable mapped by the x-axis.
 
 Displaying absolute change between consecutive calls.
 
-![](delta_duration_vs_delta_maxfreq_rays.png "Example of 'Rays' plot: delta Duration Vs delta entropy")
+##### $\Delta$ Duration Vs $\Delta$ Frequency
+
+![](delta_duration_vs_delta_maxfreq_rays.png "delta Duration Vs delta Frequency: Rays plot")
+
+##### $\Delta$ Entropy Vs $\Delta$ Pitch Contour Slope  
+
+![](delta_pcslope_vs_delta_entropy_rays.png "delta Entropy Vs delta PCS: Rays plot")
+
 
 
 #### Percentage change
 
 Displaying percentage change between consecutive calls.
 
-![](pctchange_duration_vs_pctchange_maxfreq_rays.png "Example of 'Rays' plot: % change in Duration Vs % change in Entropy")
+##### %-change Duration Vs %-change Frequency
+
+![](pctchange_duration_vs_pctchange_maxfreq_rays.png "% change in Duration Vs % change in Entropy: Rays plot")
+
+
+##### %-change Entropy Vs %-change Pitch Contour Slope
+
+![](pctchange_pcslope_vs_pctchange_entropy_rays.png "% change in Duration Vs % change in Entropy: Rays plot")
+
