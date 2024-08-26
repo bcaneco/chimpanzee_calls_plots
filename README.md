@@ -3,7 +3,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-### Developing vizualizations of acoustic data from orangutan calls.
+### Developing vizualizations of acoustic data from chimpanzee calls.
 
 Scripts to build graphical panels for each type of plot are available in
 files:
