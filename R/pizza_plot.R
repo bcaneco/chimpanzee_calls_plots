@@ -1,22 +1,49 @@
-#' Plot of data binned over radial polygons
+#' Plot of data binned over radial polygons (slices)
 #' 
-#' @param data
-#' @param x
-#' @param y
-#' @param n_slices 
-#' @param xlab
-#' @param ylab
-#' @param title
-#' @param checking_plot logical, whether to plot auxiliary plot to vizualise
-#'   points in slices, for checking purposes
-#' @param offset numeric, the offset angle (in radians) to start the slices, anti-clockwise
+#' @param data data.frame, containing acoustic data collected from audio
+#'   recordings of chimpanzee calls. Row entries are recorded calls, with
+#'   columns providing attributes and metrics associated with each call (e.g.
+#'   call duration, voice frequency, entropy, etc)
+#' @param x <data-masking>, the (unquoted) name of the column to plot as the
+#'   x-axis variable
+#' @param y <data-masking>, the (unquoted) name of the column to plot as the
+#'   y-axis variable
+#' @param n_slices integer, the number of pizza slices
+#' @param xlab,ylab character, the x-axis and y-axis labels
+#' @param title character, the plot title
+#' @param fill_slices logical, whether to colour-fill slices based on the number
+#'   of data points falling in each slice
+#' @param fill_pal character vector, defining a colour palette for filling the
+#'   slices. Function relies on `ggplot2::scale_fill_stepsn()` to generate a
+#'   n-colour binned gradient for the number of points in each slice (currently
+#'   assuming 10 equally-spaced breaks over the range of values [0, 70])
+#' @param plot_points logical, should data points be plotted?
+#' @param pnt_col_id <data-masking>, the name of the column to use as an
+#'   identifier for data points (e.g. subject name). This argument works in
+#'   tandem with `pnt_col_key` to define ID-specific colours
+#' @param pnt_col_key a vector, specifying the desired colours to associate with
+#'   each unique value contained in column specified by `pnt_col_id`
+#' @param checking_plot logical, whether to add auxiliary plot to vizualise
+#'   points in slices, for checking and validation purposes
+#' @param pnt_size numeric, size of data points
+#' @param lolli logical, should added data points be displayed as lollipop-style points?
+#' @param add_nr_points logical, whether to add text annotations with the number
+#'   of points falling in each slice.
+#' @param xlim,ylim vector, the x and y limits of the plot. Defaults to `NULL`,
+#'   which sets the plot limits to the range of values in the data.
+#' @param offset numeric, the offset angle (in radians) to start the slices,
+#'   anti-clockwise
 
-pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, title = NULL,
-                       cheking_plot = FALSE, fill_slices = TRUE,
-                       plot_points = FALSE,  pnt_col_id = NULL, pnt_col_key = ggplot2::waiver(), pnt_size = 1,
-                       lolli = FALSE,
-                       add_nr_points = TRUE, fill_pal = MetBrewer::met.brewer("Hokusai2"),
+pizza_plot <- function(data, x, y, 
+                       n_slices = NULL, 
+                       xlab = NULL, ylab = NULL, title = NULL,
+                       fill_slices = TRUE,
+                       fill_pal = MetBrewer::met.brewer("Hokusai2"),
+                       plot_points = FALSE, pnt_col_id = NULL, 
+                       pnt_col_key = ggplot2::waiver(), pnt_size = 1,
+                       lolli = FALSE, add_nr_points = TRUE, 
                        xlim = NULL, ylim = NULL,
+                       checking_plot = FALSE, 
                        offset = 0){
   
   # Note: In cases where x and y span over very different scales,
@@ -308,7 +335,7 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
   
   
   
-  if(cheking_plot){
+  if(checking_plot){
     
     # base layers
     p_check <- slice_polys |>
