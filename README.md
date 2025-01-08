@@ -23,14 +23,21 @@ acoustic metrics and attributes of calls recorded. Please refer to the
 manuscript for further details on the extraction of the metrics of
 interest.
 
+### Software Requirements
+
+- [R](https://www.r-project.org/) (\> v4.2.1)
+- [RStudio Desktop](https://posit.co/download/rstudio-desktop/)
+
 ### Plot Reproducibility
 
 To reproduce the plots, users can follow the next steps:
 
 1.  Clone or fork the repository to your local machine
-2.  Start an **R** session by double-clicking on the Rproj file \*\*\*\*
-3.  Run the command `renv::restore()`
-4.  Open and run code contained in each of the scripts specified below
+2.  Start an **R** session in Posit
+3.  Select *File* \> Open Project double-clicking on the R project file
+    *chimpanzee_calls_plots.Rproj*
+4.  Run the command `renv::restore()`
+5.  Open and run code contained in each of the scripts specified below
 
 Briefly, we consider three types of plots - Directional plots - Absolute
 change - Relative change
