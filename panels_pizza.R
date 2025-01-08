@@ -11,7 +11,7 @@ library(sfheaders)
 library(colortools)
 library(rcartocolor)
 
-dt <- read_csv("data/calls_data.csv", show_col_types = FALSE) %>%
+dt <- read_csv("data/calls_data.csv", show_col_types = FALSE) |> 
   mutate(session = as.factor(session))
 
 sapply(list.files("R/", full.names = TRUE), source)
@@ -37,7 +37,7 @@ p1 <- dt |>
     fill_slices = TRUE,
     plot_points = FALSE,
     add_nr_points = TRUE,
-    #cheking_plot = TRUE,
+    checking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
     ylab = expression(Delta ~ "Max Frequency (Hz)")
@@ -54,7 +54,7 @@ p2 <- dt |>
     fill_slices = TRUE,
     plot_points = TRUE,
     add_nr_points = TRUE,
-    #cheking_plot = TRUE,
+    #checking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
     ylab = expression(Delta ~ "Max Frequency (Hz)")
@@ -72,7 +72,7 @@ p3 <- dt |>
     fill_slices = FALSE,
     plot_points = TRUE,
     add_nr_points = TRUE,
-    #cheking_plot = TRUE,
+    #checking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
     ylab = expression(Delta ~ "Max Frequency (Hz)")
@@ -102,7 +102,7 @@ p1 <- dt |>
     fill_slices = TRUE,
     plot_points = TRUE,
     add_nr_points = FALSE,
-    #cheking_plot = TRUE,
+    #checking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
     ylab = expression(Delta ~ "Max Frequency (Hz)")
@@ -119,7 +119,7 @@ p2 <- dt |>
     fill_slices = TRUE,
     plot_points = TRUE,
     add_nr_points = FALSE,
-    #cheking_plot = TRUE,
+    #checking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
     ylab = expression(Delta ~ "Max Frequency (Hz)"),
@@ -137,7 +137,7 @@ p3 <- dt |>
     fill_slices = TRUE,
     plot_points = TRUE,
     add_nr_points = FALSE,
-    #cheking_plot = TRUE,
+    #checking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
     ylab = expression(Delta ~ "Max Frequency (Hz)"), 
@@ -153,7 +153,7 @@ p4 <- dt |>
     fill_slices = TRUE,
     plot_points = TRUE,
     add_nr_points = FALSE,
-    #cheking_plot = TRUE,
+    #checking_plot = TRUE,
     #title = "Riet", 
     xlab = expression(Delta ~ "Duration (secs)"),
     ylab = expression(Delta ~ "Max Frequency (Hz)"), 
@@ -173,7 +173,8 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
                               fill_slices = TRUE, plot_points = TRUE,
                               pnt_col_id = NULL, pnt_col_key = NULL, lolli = FALSE,
                               title = NA, fixed_lims = FALSE,
-                              xlab = NA, ylab = NA, fill_pal = MetBrewer::met.brewer("Hokusai2")
+                              xlab = NA, ylab = NA, 
+                              fill_pal = MetBrewer::met.brewer("Hokusai2")
                               ){
   # overall plot
   p_all <- data |>
