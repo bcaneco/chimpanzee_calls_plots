@@ -14,21 +14,21 @@ knitr::opts_chunk$set(
 
 ## Visualizations of acoustic data from chimpanzee calls
 
-This repository contains **R** code developed for the manuscript *Generative
-vocal plasticity in chimpanzees* by Lameira *et al* (2025, accepted under
-review). In particular, the code presented here was created to generate
-intuitive graphical visualizations of acoustic data collected and analysed from
-audio recordings of chimpanzee calls. Some of these graphs were selected for
-inclusion in the final draft of the paper, specifically those presented in
-Figures 3-6.
+This repository contains **R** code developed during the analysis underpinning
+the manuscript *Generative vocal plasticity in chimpanzees* by Lameira *et al*
+(2025, accepted under review). The code was designed to generate clear and
+insightful graphical visualizations of acoustic data collected from audio
+recordings of chimpanzee calls. Several of these visualizations appear in
+the final manuscript, specifically in Figures 3-6.
 
-Here we provide a brief description of each plot, pointing readers interested in
-reproducing them to the underlying scripts.
+To ensure reproducibility, this README provides a usage guide and references the
+necessary scripts to generate these plots.Brief descriptions of each
+visualization are also provided for clarity and context.
 
 
 ### Data
 
-Data used in this analysis is provided in the  CSV file and consists of acoustic
+Data used for this analysis is provided in the **csv** file and consists of acoustic
 metrics and attributes of calls recorded. Please refer to the manuscript for
 further details on the extraction of the metrics of interest.
 
@@ -38,9 +38,13 @@ further details on the extraction of the metrics of interest.
 - [RStudio Desktop](https://posit.co/download/rstudio-desktop/)
 
 
-### Plot Reproducibility
+### Plot Generation
 
-To reproduce the plots, users can follow the next steps:
+Briefly, we consider two types of plots
+- Directional plots (Fig. 4 in manuscript): 
+
+
+To set-up plot reproduction, users can follow the next steps:
 
   1. Clone or fork the repository to your local machine
   2. Start an **R** session in Posit
@@ -48,12 +52,13 @@ To reproduce the plots, users can follow the next steps:
   4. Run the command `renv::restore()`
   5. Open and run code contained in each of the scripts specified below
   
-Briefly, we consider three types of plots
-- Directional plots
-- Absolute change
-- Relative change
 
-Data 
+#### Directional plots 
+
+#### 'Snake-and-Ladded' plots
+
+- Absolute change (Fig. 5)
+- Relative change (Fig. 6)
 
 
 
