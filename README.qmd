@@ -2,7 +2,8 @@
 format: gfm
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 
 #library(ggplot2)
 library(readr)
@@ -12,11 +13,6 @@ library(readr)
 #library(sfheaders)
 #library(colortools)
 #library(rcartocolor)
-
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
 
 dt <- readr::read_csv("data/calls_data.csv")
 
@@ -80,19 +76,52 @@ movement in the acoustic space between consecutive calls. Two plot variants: Spo
   
 #### SNL-Spokes
 
-```{r, echo=FALSE}
+- Uses arrows to describe the direction of subsequent calls in the acoustic
+space - i.e. an arrow represents a call and the direction of the cell containing
+the subsequent call. For example, to depict the direction of movements between
+consecutive calls in the acoustic space in terms of voice activation (i.e.
+maximum frequency vs. duration of calls):
+  
+```{r}
+#| message: false
+#| code-fold: true
+
+source("R/snl_plot.r")
+
+# get aspect ratio
+asp <- dt |>
+  dplyr::summarise((max(duration) - min(duration))/(max(max_freq) - min(max_freq)))
+
+dt |>
+  snl_plot(
+    x = duration, 
+    y = max_freq, 
+    time = begin_time,  
+    ncx = 10, 
+    ncy = 10,
+    recording_id = file,
+    add_freq_col = TRUE,
+    type = "spokes",
+    xlab = 'Call Duration (secs)', 
+    ylab = "Maximum Frequency (Hz)",
+    arrow_fctr = 1.8, 
+    cellcent_fct = 0.8
+  ) +
+  ggplot2::coord_fixed(asp)
 
 ```
-  - uses arrows to describe the direction of subsequent calls in the acoustic
-  space - i.e. an arrow represents a call and the direction of the cell
-  containing the subsequent call.
     
-  - The colour of the arrows maps the number of occurrences in the given
+- The colour of the arrows maps the number of occurrences in the given
   direction, conveying a sense of traffic intensity (i.e. darker shades indicate
   larger number of transitions in the same direction).
 
-  - This is the base plot used to construct **Figure 2** in the manuscript,
-  which is generated in script [R/panels_snl.R](panels_snl.R)
+- This is the base plot used to construct **Figure 2** in the manuscript,
+describing directional patterns in voice activation (upper panel) and voice
+modulation (lower panel) at different aggregation levels, which is generated in
+script [panels_snl.r](R/panels_snl.R)
+
+![Directional change of atypical chimpanzee vowel-like voiced calls in acoustic space, as presented in Fig.2 of the manuscript](manuscript/figs/duration_vs_maxfreq_snl_spokes.png)
+
   
   
 

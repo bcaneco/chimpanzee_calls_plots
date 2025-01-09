@@ -14,8 +14,9 @@ library(rcartocolor)
 dt <- read_csv("data/calls_data.csv", show_col_types = FALSE) %>%
   mutate(session = as.factor(session))
 
-sapply(list.files("R/", full.names = TRUE), source)
-
+source("R/snl_plot.r")
+source("R/utils.r")
+source("R/compass.r")
 
 
 # ------------------------------------------ #
@@ -133,7 +134,7 @@ build_snl_panel(
   ylab = "Maximum Frequency (Hz)"
 )
 
-ggsave("outputs/duration_vs_maxfreq_snl_spokes.png", 
+ggsave("manuscript/figs/duration_vs_maxfreq_snl_spokes.png", 
        device = "png", width = 18, height = 10, units = "in", scale = 1)
 
 
@@ -150,7 +151,7 @@ build_snl_panel(
   ylab = "Maximum Frequency (Hz)"
 )
 
-ggsave("outputs/duration_vs_maxfreq_snl_tracks.png",
+ggsave("manuscript/figs/duration_vs_maxfreq_snl_tracks.png",
        device = "png", width = 18, height = 10, units = "in", scale = 1)
 
 
@@ -174,7 +175,7 @@ build_snl_panel(
 )
 
 
-ggsave("outputs/pcslope_vs_entropy_snl_spokes.png", 
+ggsave("manuscript/figs/pcslope_vs_entropy_snl_spokes.png", 
        device = "png", width = 18, height = 10, units = "in", scale = 1)
 
 
@@ -192,7 +193,7 @@ build_snl_panel(
   ylab = "Entropy (Hz)"
 )
 
-ggsave("outputs/pcslope_vs_entropy_snl_tracks.png",
+ggsave("manuscript/figs/pcslope_vs_entropy_snl_tracks.png",
        device = "png", width = 18, height = 10, units = "in", scale = 1)
 
 

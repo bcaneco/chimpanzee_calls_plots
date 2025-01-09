@@ -1,3 +1,10 @@
+require(ggplot2)
+# require(dplyr)
+# require(rlang)
+# require(tibble)
+# require(glue)
+# require(MetBrewer)
+
 #' 'Snakes and Ladders' plot for acoustic data from chimpanzee calls
 
 #' For a sequence of recorded calls, binned into a grid of cells expressing 2D
@@ -42,12 +49,12 @@
 #'   conveying the frequency of calls in a given direction
 #' @param xlab,ylab character, the x-axis and y-axis labels
 #' @param title character, the plot title
-
 snl_plot <- function(data, x, y, time, recording_id = NULL,
                      ncx = 20, ncy = ncx, xlim = NULL, ylim = NULL, 
                      arrow_fctr = 1, cellcent_fct = 1, axis_nbreaks_fct = 1,
                      type = c("spokes", "tracks"), add_freq_col = FALSE, 
                      xlab = NULL, ylab = NULL, title = NULL){
+  
   
   # browser()
   
@@ -91,24 +98,24 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
       gridcells[cell_idx, ]
       ) |>
     dplyr::group_by( {{recording_id}} ) |>
-    mutate(
-      sbsq_cell_x = lead(cell_x),
-      sbsq_cell_y = lead(cell_y),
+    dplyr::mutate(
+      sbsq_cell_x = dplyr::lead(cell_x),
+      sbsq_cell_y = dplyr::lead(cell_y),
       sbsq_cell_dist = sqrt((cell_x - sbsq_cell_x)^2 + (cell_y - sbsq_cell_y)^2),
       sbsq_cell_angle = atan2(y = sbsq_cell_y - cell_y, x = sbsq_cell_x - cell_x),
-      sbsq_cell_angle = if_else(sbsq_cell_angle < 0, sbsq_cell_angle + 2*pi, sbsq_cell_angle)
+      sbsq_cell_angle = dplyr::if_else(sbsq_cell_angle < 0, sbsq_cell_angle + 2*pi, sbsq_cell_angle)
     ) |>
     # drop last point, as there is no subsequent cell to go to
-    slice(-n())
+    dplyr::slice(-dplyr::n())
   
   # if spokes plot-type, calculate radius distances
   # This is computed as the distance between the intersection of a line linking
   # two cells and the margins of the first cell
   if(type == "spokes"){
     data <- data |>
-      filter(sbsq_cell_dist > 1e-6) |> # need to drop rows with static movement
-      rowwise() |>
-      mutate(
+      dplyr::filter(sbsq_cell_dist > 1e-6) |> # need to drop rows with static movement
+      dplyr::rowwise() |>
+      dplyr::mutate(
         spoke_radius = get_radius(
           sbsq_cell_x, sbsq_cell_y, cell_xmin, cell_ymin, cell_xmax, cell_ymax
         )
@@ -116,8 +123,8 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
     
     if(add_freq_col){
       data <- data |>
-        group_by(cell_x, cell_y, sbsq_cell_angle, spoke_radius) |>
-        summarise(n = n(), .groups = "keep")
+        dplyr::group_by(cell_x, cell_y, sbsq_cell_angle, spoke_radius) |>
+        dplyr::summarise(n = dplyr::n(), .groups = "keep")
     }
   }
   
@@ -129,9 +136,9 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
   
   p <- gridcells |>
     # base layers
-    ggplot2::ggplot(ggplot2::aes(x = cell_x, y = cell_y)) +
-    ggplot2::geom_rect(
-      ggplot2::aes(xmin = cell_xmin, xmax = cell_xmax, ymin = cell_ymin, ymax = cell_ymax),
+    ggplot(aes(x = cell_x, y = cell_y)) +
+    geom_rect(
+      aes(xmin = cell_xmin, xmax = cell_xmax, ymin = cell_ymin, ymax = cell_ymax),
       col = "white", 
       #linetype = "dashed",
       fill = "grey95"
@@ -141,21 +148,21 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
     #geom_point(data = data, aes(x = {{x}}, y = {{y}}), col = "blue", alpha = 0.3) +
     
     # axis definition
-    ggplot2::labs(x = xlab, y = ylab, title = title) +
-    ggplot2::scale_x_continuous(
+    labs(x = xlab, y = ylab, title = title) +
+    scale_x_continuous(
       expand = expansion(mult = c(0, 0)),
       breaks = scales::extended_breaks(min(ncx * axis_nbreaks_fct, 20))
     ) +
-    ggplot2::scale_y_continuous(
+    scale_y_continuous(
       expand = expansion(mult = c(0, 0)),
       breaks = scales::extended_breaks(min(ncy * axis_nbreaks_fct, 20))
     ) +
     
-    #ggplot2::coord_fixed(ratio = res[1]/res[2]) +
+    #coord_fixed(ratio = res[1]/res[2]) +
     
     # theme specification
-    ggplot2::theme_bw() + 
-    ggplot2::theme(panel.grid = element_blank())
+    theme_bw() + 
+    theme(panel.grid = element_blank())
     
 
   # Spoke plot
@@ -163,22 +170,22 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
     
     if(!add_freq_col){
       p <- p +
-        ggplot2::geom_spoke(
+        geom_spoke(
           data = data,
-          ggplot2::aes(angle = sbsq_cell_angle, radius = spoke_radius*0.9),
+          aes(angle = sbsq_cell_angle, radius = spoke_radius*0.9),
           size = 0.7,
           arrow = arrow(length = unit(0.008 * arrow_fctr, "npc"), type = "closed", angle = 20),
           alpha = 0.25
         ) #+
-        # ggplot2::geom_point(
+        # geom_point(
         #   data = data,
-        #   ggplot2::aes(x = cell_x, y = cell_y), col = "#575cf7", size = 1
+        #   aes(x = cell_x, y = cell_y), col = "#575cf7", size = 1
         # )
     }else{
       p <- p +
-        ggplot2::geom_spoke(
+        geom_spoke(
           data = data,
-          ggplot2::aes(angle = sbsq_cell_angle, radius = spoke_radius*0.9, col = n), 
+          aes(angle = sbsq_cell_angle, radius = spoke_radius*0.9, col = n), 
           size = 0.7,
           arrow = arrow(length = unit(0.008 * arrow_fctr, "npc"), type = "closed", angle = 20)
         ) +
@@ -201,9 +208,9 @@ snl_plot <- function(data, x, y, time, recording_id = NULL,
   if(type == "tracks"){
     
     p <- p +
-      ggplot2::geom_curve(
-        data = filter(data, sbsq_cell_dist > 1e-6), # need to drop rows with static movement
-        ggplot2::aes(
+      geom_curve(
+        data = dplyr::filter(data, sbsq_cell_dist > 1e-6), # need to drop rows with static movement
+        aes(
           x = cell_x, 
           y = cell_y, 
           xend = sbsq_cell_x, 
