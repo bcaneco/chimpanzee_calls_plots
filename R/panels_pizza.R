@@ -14,160 +14,17 @@ library(rcartocolor)
 dt <- read_csv("data/calls_data.csv", show_col_types = FALSE) |> 
   mutate(session = as.factor(session))
 
-sapply(list.files("R/", full.names = TRUE), source)
+source("R/pizza_plot.R")
+source("R/utils.R")
 
-# --------------------------------- #
-# ---    Global variables      -----
-# --------------------------------- #
 
 pnt_col_key <- c("Riet" = "firebrick3", "Alex" = "royalblue4")
 
 
-# ------------------------ #
-# ---    Options      -----
-# ------------------------ #
 
-p1 <- dt |>
-  pizza_plot(
-    x = delta_duration, 
-    #y = delta_voice_inflexion,
-    y = delta_voice_freq,
-    n_slices = 8,
-    offset = pi/8,
-    fill_slices = TRUE,
-    plot_points = FALSE,
-    add_nr_points = TRUE,
-    checking_plot = TRUE,
-    #title = "Riet", 
-    xlab = expression(Delta ~ "Duration (secs)"),
-    ylab = expression(Delta ~ "Max Frequency (Hz)")
-  )
-
-
-p2 <- dt |>
-  pizza_plot(
-    x = delta_duration, 
-    #y = delta_voice_inflexion,
-    y = delta_voice_freq,
-    n_slices = 8,
-    offset = pi/8,
-    fill_slices = TRUE,
-    plot_points = TRUE,
-    add_nr_points = TRUE,
-    #checking_plot = TRUE,
-    #title = "Riet", 
-    xlab = expression(Delta ~ "Duration (secs)"),
-    ylab = expression(Delta ~ "Max Frequency (Hz)")
-  )
-
-
-
-p3 <- dt |>
-  pizza_plot(
-    x = delta_duration, 
-    #y = delta_voice_inflexion,
-    y = delta_voice_freq,
-    n_slices = 8,
-    offset = pi/8,
-    fill_slices = FALSE,
-    plot_points = TRUE,
-    add_nr_points = TRUE,
-    #checking_plot = TRUE,
-    #title = "Riet", 
-    xlab = expression(Delta ~ "Duration (secs)"),
-    ylab = expression(Delta ~ "Max Frequency (Hz)")
-  )
-
-
-options_panel <- p1 + p2 + p3
-
-
-ggsave("outputs/pizza_plots_options.png", options_panel,
-       device = "png", width = 14, height = 4.5, units = "in", scale = 1)
-
-
-
-
-# ----------------------------- #
-# ---    Colour Palette     -----
-# ----------------------------- #
-
-p1 <- dt |>
-  pizza_plot(
-    x = delta_duration, 
-    #y = delta_voice_inflexion,
-    y = delta_voice_freq,
-    n_slices = 8,
-    offset = pi/8,
-    fill_slices = TRUE,
-    plot_points = TRUE,
-    add_nr_points = FALSE,
-    #checking_plot = TRUE,
-    #title = "Riet", 
-    xlab = expression(Delta ~ "Duration (secs)"),
-    ylab = expression(Delta ~ "Max Frequency (Hz)")
-  )
-
-
-p2 <- dt |>
-  pizza_plot(
-    x = delta_duration, 
-    #y = delta_voice_inflexion,
-    y = delta_voice_freq,
-    n_slices = 8,
-    offset = pi/8,
-    fill_slices = TRUE,
-    plot_points = TRUE,
-    add_nr_points = FALSE,
-    #checking_plot = TRUE,
-    #title = "Riet", 
-    xlab = expression(Delta ~ "Duration (secs)"),
-    ylab = expression(Delta ~ "Max Frequency (Hz)"),
-    fill_pal = rcartocolor::carto_pal(name = "Teal")
-  )
-
-
-
-p3 <- dt |>
-  pizza_plot(
-    x = delta_duration, 
-    y = delta_voice_freq,
-    n_slices = 8,
-    offset = pi/8,
-    fill_slices = TRUE,
-    plot_points = TRUE,
-    add_nr_points = FALSE,
-    #checking_plot = TRUE,
-    #title = "Riet", 
-    xlab = expression(Delta ~ "Duration (secs)"),
-    ylab = expression(Delta ~ "Max Frequency (Hz)"), 
-    fill_pal = rcartocolor::carto_pal(name = "Mint")
-  )
-
-p4 <- dt |>
-  pizza_plot(
-    x = delta_duration, 
-    y = delta_voice_freq,
-    n_slices = 8,
-    offset = pi/8,
-    fill_slices = TRUE,
-    plot_points = TRUE,
-    add_nr_points = FALSE,
-    #checking_plot = TRUE,
-    #title = "Riet", 
-    xlab = expression(Delta ~ "Duration (secs)"),
-    ylab = expression(Delta ~ "Max Frequency (Hz)"), 
-    fill_pal = rcartocolor::carto_pal(name = "DarkMint")
-  )
-
-p1 + p3 + p4
-
-
-
-
-# ----------------------------- #
-# ---    Panel Building     -----
-# ----------------------------- #
+# ------------------------------------------ #
+# ---   Local function: panel building  ------
+# ------------------------------------------ #
 
 build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,   
                               fill_slices = TRUE, plot_points = TRUE,
@@ -285,31 +142,11 @@ build_pizza_panel <- function(data, x, y, n_slices, offset = pi/n_slices,
 
 
 
-# --------------------------------------------- #
-# --- Delta Duration Vs. Delta Frequency   ------
-# --------------------------------------------- #
+# ------------------------------------------------- #
+# ---             Absolute Change                ---
+# ------------------------------------------------- #
 
-# with points
-build_pizza_panel(
-  data = dt, 
-  x = delta_duration, 
-  y = delta_voice_freq,
-  n_slices = 8,  
-  fill_slices = TRUE, 
-  plot_points = TRUE, 
-  pnt_col_id = subject, 
-  pnt_col_key = pnt_col_key,
-  fixed_lims = FALSE,
-  xlab = expression(Delta ~ "Duration (secs)"),
-  ylab = expression(Delta ~ "Max Frequency (Hz)"),
-  #fill_pal = rcartocolor::carto_pal(name = "DarkMint")
-  fill_pal = rcartocolor::carto_pal(name = "Teal")
-) 
-
-ggsave("outputs/delta_duration_vs_delta_maxfreq_pizza.png", 
-       device = "png", width = 17, height = 10, units = "in", scale = 1)
-
-
+## Voice activation: Duration Vs. Max Frequency ----------------
 
 # origin-lollipop style
 build_pizza_panel(
@@ -328,36 +165,12 @@ build_pizza_panel(
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/delta_duration_vs_delta_maxfreq_pizza_lolli.png", 
+ggsave("manuscript/figs/delta_duration_vs_delta_maxfreq_pizza_lolli.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
+## Voice Modulation: Pitch Contour Slope Vs. Entropy   ----------------
 
-
-# ---------------------------------------------------- #
-# ---     Delta PC Slope Vs. Delta Entropy        ------
-# ---------------------------------------------------- #
-
-build_pizza_panel(
-  data = dt, 
-  x = delta_voice_inflexion, 
-  y = delta_voice_entropy,
-  n_slices = 8,  
-  fill_slices = TRUE, 
-  plot_points = TRUE, 
-  pnt_col_id = subject, 
-  pnt_col_key = pnt_col_key,
-  fixed_lims = FALSE,
-  xlab = expression(Delta ~ "Pitch Counter Slope (Hz)"),
-  ylab = expression(Delta ~ "Entropy (Hz)"),
-  fill_pal = rcartocolor::carto_pal(name = "Teal")
-) 
-
-ggsave("outputs/delta_pcslope_vs_delta_entropy_pizza.png", 
-       device = "png", width = 17, height = 10, units = "in", scale = 1)
-
-
-# origin-lollipop style
 build_pizza_panel(
   data = dt, 
   x = delta_voice_inflexion, 
@@ -374,35 +187,18 @@ build_pizza_panel(
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/delta_pcslope_vs_delta_entropy_pizza_lolli.png", 
+ggsave("manuscript/figs/delta_pcslope_vs_delta_entropy_pizza_lolli.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
 
 
+# ------------------------------------------------- #
+# ---             Relative Change                ---
+# ------------------------------------------------- #
 
-# -------------------------------------------------------- #
-# ---  Pct Change Duration Vs. Pct Change Frequency   ------
-# --------------------------------------------------------- #
 
-build_pizza_panel(
-  data = dt, 
-  x = pc_duration, 
-  y = pc_voice_freq,
-  n_slices = 8,  
-  fill_slices = TRUE, 
-  plot_points = TRUE, 
-  pnt_col_id = subject, 
-  pnt_col_key = pnt_col_key,
-  fixed_lims = FALSE,
-  xlab = "Change in Duration (%)",
-  ylab = "Change in Max Frequency (%)",
-  fill_pal = rcartocolor::carto_pal(name = "Teal")
-) 
-
-ggsave("outputs/pctchange_duration_vs_pctchange_maxfreq_pizza.png", 
-       device = "png", width = 17, height = 10, units = "in", scale = 1)
-
+## Voice activation: Duration Vs. Max Frequency ----------------
 
 # origin-lollipop style
 build_pizza_panel(
@@ -421,35 +217,12 @@ build_pizza_panel(
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/pctchange_duration_vs_pctchange_maxfreq_pizza_lolli.png", 
+ggsave("manuscript/figs/pctchange_duration_vs_pctchange_maxfreq_pizza_lolli.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 
 
-
-# --------------------------------------------------------------- #
-# ---      Pct Change PC Slope Vs. Pct Change Entropy           --
-# --------------------------------------------------------------- #
-
-build_pizza_panel(
-  data = dt, 
-  x = pc_voice_inflexion, 
-  y = pc_voice_entropy,
-  n_slices = 8,
-  fill_slices = TRUE, 
-  plot_points = TRUE, 
-  pnt_col_id = subject, 
-  pnt_col_key = pnt_col_key,
-  fixed_lims = FALSE,
-  xlab = "Change in Pitch Contour Slope (%)",
-  ylab = "Change in Entropy (%)",
-  fill_pal = rcartocolor::carto_pal(name = "Teal")
-) 
-
-ggsave("outputs/pctchange_pcslope_vs_pctchange_entropy_pizza.png", 
-       device = "png", width = 17, height = 10, units = "in", scale = 1)
-
-
+## Voice Modulation: Pitch Contour Slope Vs. Entropy   ----------------
 
 build_pizza_panel(
   data = dt, 
@@ -467,7 +240,7 @@ build_pizza_panel(
   fill_pal = rcartocolor::carto_pal(name = "Teal")
 ) 
 
-ggsave("outputs/pctchange_pcslope_vs_pctchange_entropy_pizza_lolli.png", 
+ggsave("manuscript/figs/pctchange_pcslope_vs_pctchange_entropy_pizza_lolli.png", 
        device = "png", width = 17, height = 10, units = "in", scale = 1)
 
 

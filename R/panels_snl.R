@@ -19,8 +19,9 @@ source("R/utils.r")
 source("R/compass.r")
 
 
+
 # ------------------------------------------ #
-# ---   Local function building panels  ------
+# ---   Local function: panel building  ------
 # ------------------------------------------ #
 
 build_snl_panel <- function(data, x, y, time, recording_id = NULL, ncx = 20, ncy = ncx,
@@ -115,10 +116,11 @@ build_snl_panel <- function(data, x, y, time, recording_id = NULL, ncx = 20, ncy
 
 
 
-
-# ------------------------------------------ #
-# ---   Duration Vs. Max Frequency   ------
-# ------------------------------------------ #
+# ---------------------------------------------------------------------------- #
+# ---      SNL-Tracks: Directional Change Patterns in Acoustic Space        ---
+# ---------------------------------------------------------------------------- #
+ 
+## Voice activation: Duration Vs. Max Frequency ----------------
 
 build_snl_panel(
   data = dt,
@@ -138,27 +140,7 @@ ggsave("manuscript/figs/duration_vs_maxfreq_snl_spokes.png",
        device = "png", width = 18, height = 10, units = "in", scale = 1)
 
 
-build_snl_panel(
-  data = dt,
-  x = duration,
-  y = max_freq, 
-  time = begin_time,  
-  ncx = 10, 
-  ncy = 10,
-  recording_id = file, 
-  type = "tracks",
-  xlab = 'Call Duration (secs)', 
-  ylab = "Maximum Frequency (Hz)"
-)
-
-ggsave("manuscript/figs/duration_vs_maxfreq_snl_tracks.png",
-       device = "png", width = 18, height = 10, units = "in", scale = 1)
-
-
-
-# ------------------------------------------ #
-# ---       PFC Slope Vs. Entropy     ------
-# ------------------------------------------ #
+## Voice Modulation: Pitch Contour Slope Vs. Entropy   ----------------
 
 build_snl_panel(
   data = dt,
@@ -179,6 +161,32 @@ ggsave("manuscript/figs/pcslope_vs_entropy_snl_spokes.png",
        device = "png", width = 18, height = 10, units = "in", scale = 1)
 
 
+
+# ----------------------------------------------------------------------- #
+# ---        SNL-Tracks: Distance Changes in Acoustic Space             ---
+# ----------------------------------------------------------------------- #
+
+## Voice activation: Duration Vs. Max Frequency ----------------
+
+build_snl_panel(
+  data = dt,
+  x = duration,
+  y = max_freq, 
+  time = begin_time,  
+  ncx = 10, 
+  ncy = 10,
+  recording_id = file, 
+  type = "tracks",
+  xlab = 'Call Duration (secs)', 
+  ylab = "Maximum Frequency (Hz)"
+)
+
+ggsave("manuscript/figs/duration_vs_maxfreq_snl_tracks.png",
+       device = "png", width = 18, height = 10, units = "in", scale = 1)
+
+
+
+## Voice Modulation: Pitch Contour Slope Vs. Entropy   ----------------
 
 build_snl_panel(
   data = dt,

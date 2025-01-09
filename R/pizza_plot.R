@@ -1,9 +1,12 @@
+require(dplyr)
+require(ggplot2)
+
 #' Plot of data binned over radial polygons (slices)
 #' 
 #' @param data data.frame, containing acoustic data collected from audio
 #'   recordings of chimpanzee calls. Row entries are recorded calls, with
 #'   columns providing attributes and metrics associated with each call (e.g.
-#'   call duration, voice frequency, entropy, etc)
+#'   recording time, call duration, voice frequency, entropy, etc).
 #' @param x <data-masking>, the (unquoted) name of the column to plot as the
 #'   x-axis variable
 #' @param y <data-masking>, the (unquoted) name of the column to plot as the
@@ -36,6 +39,7 @@
 
 pizza_plot <- function(data, x, y, 
                        n_slices = NULL, 
+                       offset = 0,
                        xlab = NULL, ylab = NULL, title = NULL,
                        fill_slices = TRUE,
                        fill_pal = MetBrewer::met.brewer("Hokusai2"),
@@ -43,8 +47,7 @@ pizza_plot <- function(data, x, y,
                        pnt_col_key = ggplot2::waiver(), pnt_size = 1,
                        lolli = FALSE, add_nr_points = TRUE, 
                        xlim = NULL, ylim = NULL,
-                       checking_plot = FALSE, 
-                       offset = 0){
+                       checking_plot = FALSE){
   
   # Note: In cases where x and y span over very different scales,
   # working with radial geometry is tricky. To ease things up, all
@@ -127,8 +130,8 @@ pizza_plot <- function(data, x, y,
       sfheaders::sfc_to_df(pnts_sf[x]) |>
         dplyr::select(x, y)
     }) |>
-    map(function(x){
-      drop_na(x)
+    purrr::map(function(x){
+      tidyr::drop_na(x)
     })
   
   # Update slice data and drop empty slices 
@@ -184,7 +187,7 @@ pizza_plot <- function(data, x, y,
   
   slice_polys <- slices |>
     select(slice_id, n_points, max_dist_poly) |>
-    unnest(max_dist_poly) |>
+    tidyr::unnest(max_dist_poly) |>
     mutate(
       x = unrescale(x, xmin = xrange[1], xmax = xrange[2]),
       y = unrescale(y, xmin = yrange[1], xmax = yrange[2])
@@ -193,7 +196,7 @@ pizza_plot <- function(data, x, y,
   
   slice_arcs <- slices |>
     select(slice_id, med_dist_arc, lpct_dist_arc, upct_dist_arc ) |>
-    unnest(c(med_dist_arc, lpct_dist_arc, upct_dist_arc), names_sep = "_") |>
+    tidyr::unnest(c(med_dist_arc, lpct_dist_arc, upct_dist_arc), names_sep = "_") |>
     mutate(
       across(contains("x"), ~ unrescale(., xmin = xrange[1], xmax = xrange[2])),
       across(contains("y"), ~ unrescale(., xmin = yrange[1], xmax = yrange[2]))
@@ -202,7 +205,7 @@ pizza_plot <- function(data, x, y,
   
   slice_pnts <- slices |> 
     select(slice_id, pts_in_slice) |> 
-    unnest(pts_in_slice) |>
+    tidyr::unnest(pts_in_slice) |>
     mutate(
       x = unrescale(x, xmin = xrange[1], xmax = xrange[2]),
       y = unrescale(y, xmin = yrange[1], xmax = yrange[2])
@@ -211,7 +214,7 @@ pizza_plot <- function(data, x, y,
   
   slice_labels <- slices |>
     select(slice_id, n_points, label_pos) |>
-    unnest(label_pos) |>
+    tidyr::unnest(label_pos) |>
     mutate(
       x = unrescale(x, xmin = xrange[1], xmax = xrange[2]),
       y = unrescale(y, xmin = yrange[1], xmax = yrange[2]),

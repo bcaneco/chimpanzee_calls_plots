@@ -16,6 +16,7 @@ library(readr)
 
 dt <- readr::read_csv("data/calls_data.csv")
 
+
 ```
 
 <!-- badges: start -->
@@ -26,13 +27,13 @@ dt <- readr::read_csv("data/calls_data.csv")
 This repository contains code developed during the analysis underpinning
 the manuscript *Generative vocal plasticity in chimpanzees* by Lameira *et al*
 (2025, accepted under review). The code was designed to generate clear and
-insightful graphical visualizations of acoustic data collected from audio
+insightful visualizations of acoustic data collected from audio
 recordings of chimpanzee calls. Several of these visualizations appear in
 the final manuscript, specifically in Figures 2-5.
 
-To ensure reproducibility, this README provides a usage guide and references the
-necessary scripts to generate these plots. Descriptions of each visualization
-are also provided for context and clarity.
+To ensure reproducibility, this README outlines the setup and provides
+references to the scripts used to generate these figures. Descriptions of each
+visualization are included for context and ease of interpretation.
 
 
 ## Data
@@ -70,17 +71,19 @@ The following tools are required to run the scripts:
 
 ### "Snake-and-Ladder" (SNL) plots
 
-For a sequence of recorded calls, binned into a grid of cells expressing 2D
-intervals of selected acoustic metrics, these plots aim to describe vocal
-movement in the acoustic space between consecutive calls. Two plot variants: Spokes and Tracks
-  
-#### SNL-Spokes
+These plots explore vocal movement within the acoustic space by graphically
+depicting sequences of recorded calls. Calls are binned into a 2D grid of cells,
+each representing intervals of selected acoustic metrics. The plots illustrate
+transitions in acoustic features between consecutive calls, offering two
+variants: Spokes plots and Tracks plots.
 
-- Uses arrows to describe the direction of subsequent calls in the acoustic
-space - i.e. an arrow represents a call and the direction of the cell containing
-the subsequent call. For example, to depict the direction of movements between
-consecutive calls in the acoustic space in terms of voice activation (i.e.
-maximum frequency vs. duration of calls):
+#### SNL-Spokes: Visualizing Directional Patterns in Acoustic Space
+
+- These plots use arrows to describe the direction of change between consecutive
+calls in the acoustic space. An arrow represents a call and the direction of the
+cell containing the subsequent call. For instance, to depict directional
+patterns in terms of voice activation (i.e. maximum frequency vs. duration of
+calls) between consecutive calls:
   
 ```{r}
 #| message: false
@@ -111,69 +114,128 @@ dt |>
 
 ```
     
-- The colour of the arrows maps the number of occurrences in the given
-  direction, conveying a sense of traffic intensity (i.e. darker shades indicate
-  larger number of transitions in the same direction).
+- The colour of the arrows encodes the number of transitions in the same
+direction, representing traffic intensity. Darker shades indicate larger number
+of occurrences.
 
-- This is the base plot used to construct **Figure 2** in the manuscript,
-describing directional patterns in voice activation (upper panel) and voice
-modulation (lower panel) at different aggregation levels, which is generated in
-script [panels_snl.r](R/panels_snl.R)
+- This variant forms the basis for **Figure 2** in the manuscript,
+highlighting directional patterns in voice activation (upper panel) and voice
+modulation (lower panel) at different aggregation levels. To recreate each panel
+of **Figure 2**, run the script [panels_snl.r](R/panels_snl.R)
 
-![Directional change of atypical chimpanzee vowel-like voiced calls in acoustic space, as presented in Fig.2 of the manuscript](manuscript/figs/duration_vs_maxfreq_snl_spokes.png)
+![](manuscript/figs/duration_vs_maxfreq_snl_spokes.png){width=60%}
+![](manuscript/figs/pcslope_vs_entropy_snl_spokes.png){width=60%}
 
   
-  
+#### SNL-Tracks: Visualizing Distance Changes in Acoustic Space
 
-#### SNL-Tracks
+- These plots illustrate actual connections between consecutive cells in the
+acoustic space, depicting distance changes between successive calls under the
+displayed acoustic metrics. For instance, to depict movement tracks between
+consecutive calls in terms of voice activation (i.e. maximum frequency vs.
+duration of calls):
 
-- Shows the actual connections between each and subsequent cells, depicting the
-distance change between consecutive calls, in terms of the contrasted metric, in
-the acoustic space.
+```{r}
+#| message: false
+#| code-fold: true
 
-- To help visualization, arrows are coloured to represent the direction of
-movement (in degrees).
+dt |>
+  snl_plot(
+    x = duration, 
+    y = max_freq, 
+    time = begin_time,  
+    ncx = 10, 
+    ncy = 10,
+    recording_id = file,
+    add_freq_col = TRUE,
+    type = "tracks",
+    xlab = 'Call Duration (secs)', 
+    ylab = "Maximum Frequency (Hz)",
+    arrow_fctr = 1.8, 
+    cellcent_fct = 0.8
+  ) +
+  ggplot2::coord_fixed(asp)
+```
 
-- This is the base plot used to construct **Figure 3** in the manuscript.
+- Arrows are colour-coded to indicate the direction of movement (in degrees),
+aiding interpretation of the transitions.
 
+- This variant is the foundation for **Figure 3** in the manuscript,
+showcasing travel patterns in voice activation (upper panel) and voice
+modulation (lower panel) at different aggregation levels. To recreate each panel
+of **Figure 3**, run the script [panels_snl.r](R/panels_snl.R)
 
+![](manuscript/figs/duration_vs_maxfreq_snl_tracks.png){width=60%}
+![](manuscript/figs/pcslope_vs_entropy_snl_tracks.png){width=60%}
 
 ### "Pizza" plots
 
-These plots intend to depict the degree and range of voice change between
-consecutive calls. For a given sequence of calls, points expressing acoustic
-changes between consecutive calls are graphically grouped into 8 slice-shaped
-radial polygons with origin at 0 (expressing no change). Furthermore:
+These plots visually represent the degree and range of vocal changes between
+consecutive calls. For a given sequence of calls, acoustic changes are grouped
+into eight radial, slice-shaped polygons, radiating from an origin point
+(representing no change). Key features include:
 
-- The length of each slice is given by the comprised point at furthest distance 
-from origin.
+- **Slice Length**: Determined by the point at the furthest distance from the
+origin within each slice.
 
-- For a given the 2D spread of a set of points, diagonal slices illustrate cases
-where changes occurred predominately on both dimensions. Vertical and horizontal
-slices represent instances were changes were mostly uni-dimensional.
+- **Dimensional Change**: Diagonal slices indicate changes occurring predominantly
+along both dimensions, while vertical and horizontal slices highlight primarily
+unidimensional changes.
 
-- Solid and dashed lines express, respectively, the median and percentiles (2.5%
-and 97.5%) of the distances between the points comprised in the slice and the
-origin.
+- **Median and Percentiles**: Solid lines mark the median distance of points from
+origin within each slice, while dashed lines denote the 2.5% and 97.5%
+percentiles of these distances.
 
-- The colour of the slice maps the number of points comprised in that slice (more 
-points, darker shade)
+- **Slice Colour Coding**: The colour saturation of each slice corresponds to the number
+of points it contains, with darker shades representing higher densities.
+
+For example, to showcase absolute differences in voice activation (i.e. maximum
+frequency vs. duration of calls) featured between consecutive calls:
+
+```{r}
+#| message: false
+#| code-fold: true
+
+source("R/pizza_plot.R")
+source("R/utils.r")
+
+dt |>
+  pizza_plot(
+    x = delta_duration, 
+    y = delta_voice_freq,
+    n_slices = 8,
+    offset = pi/8,
+    fill_slices = TRUE,
+    plot_points = TRUE,
+    add_nr_points = TRUE, 
+    lolli = TRUE,
+    xlab = expression(Delta ~ "Duration (secs)"),
+    ylab = expression(Delta ~ "Max Frequency (Hz)")
+  ) + ggplot2::coord_fixed(asp)
+
+```
 
 
+This plot serves as the basis for the graphical panels presented in the manuscript:
 
+- **Figure 4**, illustrating the absolute change in terms of voice activation 
+(upper panel) and voice modulation (lower panel)
 
+![](manuscript/figs/delta_duration_vs_delta_maxfreq_pizza_lolli.png){width=60%}
 
+![](manuscript/figs/delta_pcslope_vs_delta_entropy_pizza_lolli.png){width=60%}
 
-<!-- Scripts to build graphical panels for each type of plot are available in -->
-<!-- files: -->
+- **Figure 5**, depicting relative changes for the same acoustic metrics
 
-<!-- - [panels_pizza.R](panels_pizza.R)  -->
-<!-- - [panels_rays.R](panels_rays.R) -->
-<!-- - [panels_snl.R](panels_snl.R) -->
-<!-- - [panels_snl_spokes.R](panels_snl_spokes.R) -->
+![](manuscript/figs/pctchange_duration_vs_pctchange_maxfreq_pizza_lolli.png){width=60%}
+![](manuscript/figs/pctchange_pcslope_vs_pctchange_entropy_pizza_lolli.png){width=60%}
+
+To recreate these figures, run the script [panels_pizza.r](R/panels_pizza.R)
+
 
 
 ### Futher Details
 
-A more detailed description and discussion the developed plots can be found
-[here](/outputs/readme.md).
+Further insights and considerations that guided the development of these
+visualizations are available [here](dev/outputs/readme.md).
+
