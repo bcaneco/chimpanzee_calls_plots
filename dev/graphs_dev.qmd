@@ -1,0 +1,208 @@
+---
+title: "Graphs Development"
+author: "Bruno Caneco"
+format: html
+editor: visual
+---
+
+
+```{r}
+#| include: false
+
+library(tidyverse)
+library(readxl)
+library(MetBrewer)
+library(patchwork)
+library(sf)
+library(sfheaders)
+
+theme_set(theme_minimal())
+
+dt <- read_csv("data/calls_data.csv", show_col_types = FALSE) %>%
+    mutate(session = as.factor(session))
+
+col_pal <- met.brewer("Tam", type = "continuous", direction = 1)
+
+sapply(list.files("R/", full.names = TRUE), source)
+
+```
+
+```{r}
+dt
+```
+
+
+## Snakes and Ladders plot
+
+
+```{r}
+
+dt |>
+ #filter(file == "Riet MZ06") |>
+  #slice(1:20) %>%
+  snl_plot(
+    x = duration, 
+    y = max_freq, 
+    time = begin_time, 
+    session_id = session, 
+    ncx = 10, 
+    xlab = "Call Duration (secs)",
+    ylab = "Maximum Frequency (Hz)",
+    type = "spokes"
+    ) 
+
+```
+
+
+```{r}
+
+dt |>
+ filter(file == "Riet MZ06") |>
+  #slice(1:20) %>%
+  snl_plot(
+    x = duration, 
+    y = max_freq, 
+    time = begin_time, 
+    session_id = session, 
+    ncx = 5, 
+    xlab = "Call Duration (secs)",
+    ylab = "Maximum Frequency (Hz)",
+    type = "tracks"
+    ) 
+
+```
+
+
+
+
+
+## Pizza plots
+
+```{r}
+
+quad_dt <- tribble(
+  ~quadrant, ~xmin, ~xmax, ~ymin, ~ymax,
+    "1",     0,   Inf,     0,   Inf,
+    "2",   -Inf,    0,     0,   Inf,
+    "3",   -Inf,    0,   -Inf,     0,
+    "4",     0,   Inf,   -Inf,     0,
+)
+
+quad_dt |>
+  ggplot() +
+  geom_rect(
+    aes(xmin = xmin, xmax = xmax, ymax = ymax, ymin = ymin, fill = quadrant),
+    alpha = 0.5
+  ) +
+  geom_point(aes(delta_duration, delta_voice_freq), data = dt) +
+  scale_fill_manual(values = met.brewer("Isfahan2", 4), 
+                    labels = 
+                      # c("Duration up | Frequency up", 
+                      #   "Duration down | Frequency up",
+                      #   "Duration down | Frequency down",
+                      #   "Duration up | Frequency down")
+                    c("Longer & Higher", 
+                      "Shorter & Higher",
+                      "Shorter & Lower",
+                      "Longer & Lower")
+                    )
+```
+
+```{r}
+dt |>
+  #drop_na(delta_voice_freq) %>%
+  ggplot(aes(x = delta_duration, y = delta_voice_freq)) +
+  #geom_bin_2d() +
+  geom_hex() +
+  scale_fill_gradientn(colours = col_pal, na.value = "red")
+```
+
+
+```{r}
+dt %>%
+  drop_na(delta_duration) %>%
+  ggplot(aes(x = delta_duration, y = delta_voice_freq)) +
+  geom_point(alpha = 0.3) +
+  geom_density_2d_filled(alpha = 0.6, color = "black")
+  #geom_density_2d()
+```
+
+
+
+
+```{r}
+#| fig-width: 12
+
+p1 <- dt |>
+  drop_na(delta_duration) |>
+  mutate(
+    delta_duration_bands = cut_interval(delta_duration, n = 10)
+    #delta_freq_bands = cut_number(dt$delta_voice_freq, n = 4)
+  ) |>
+  group_by(delta_duration_bands) |>
+  summarise(
+    across(delta_voice_freq, list(mn = mean, max = max, min = min, med = median))
+  ) |>
+  ggplot() +
+  geom_col(aes(delta_duration_bands, delta_voice_freq_min), fill = "darkblue", alpha = 0.7) +
+  geom_col(aes(delta_duration_bands, delta_voice_freq_max), fill = "darkgreen", alpha = 0.7) +
+  geom_point(aes(delta_duration_bands, delta_voice_freq_med), col = "orange")
+
+
+p2 <- p1 + coord_polar(direction = 1)
+
+p1 + p2
+
+```
+
+- fails to represent #obs and distribution in each band of x 
+- one-dimensional
+- perceptually challenging
+
+
+```{r}
+#| fig-width: 10
+
+dt|>
+  pizza_plot(
+    n_slices = 10, 
+    delta_duration, 
+    #  delta_voice_inflexion,
+    delta_voice_freq,
+    cheking_plot = TRUE,
+    #title = "Riet", 
+    #xlab = "Delta duration (secs)"
+    xlab = expression(Delta ~ "Duration (secs)"),
+    ylab = expression(Delta ~ "Max Frequency (Hz)")
+  )
+
+```
+
+### Relative Change 
+```{r}
+dt <- dt |>
+  mutate(
+    pc_duration = (duration - lag(duration))/lag(duration) * 100,
+    pc_voice_freq = (max_freq - lag(max_freq))/lag(max_freq) * 100,
+    pc_voice_inflexion = (pfc_avg_slope - lag(pfc_avg_slope))/lag(pfc_avg_slope) * 100,
+    pc_voice_entropy = (agg_entropy - lag(agg_entropy))/lag(agg_entropy)* 100
+  )
+
+dt|>
+  pizza_plot(
+    x = pc_duration, 
+    y = pc_voice_freq,
+    n_slices = 8,
+    offset = pi/8,
+    #cheking_plot = TRUE,
+    #title = "Riet", 
+    xlab = expression("Change in Duration (%)"),
+    ylab = expression("Change in Max Frequency (%)"),
+    ribbon = FALSE
+  ) 
+
+  
+
+```
+
+

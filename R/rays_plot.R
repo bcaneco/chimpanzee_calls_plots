@@ -1,14 +1,30 @@
-#' @param data
-#' @param x
-#' @param y
-#' @param xlab
-#' @param ylab
-#' @param title
+#' Lollipop-style rays with origin at [0, 0] (i.e. no changes) are used to express magnitude of changes.
+#' 
+#' @param data data.frame, containing acoustic data collected from audio
+#'   recordings of chimpanzee calls. Row entries are recorded calls, with
+#'   columns providing attributes and metrics associated with each call (e.g.
+#'   call duration, voice frequency, entropy, etc)
+#' @param x <data-masking>, the (unquoted) name of the column to plot as the
+#'   x-axis variable
+#' @param y <data-masking>, the (unquoted) name of the column to plot as the
+#'   y-axis variable
+#' @param n_slices integer, the number of pizza slices
+#' @param offset numeric, the offset angle (in radians) to start the slices,
+#'   anti-clockwise
+#' @param show_slices logical, whether to plot slice-shaped panes with colors
+#'   encoding cardinal directions to ease vizualisation of concomitant changes
+#'   of the two variables between consecutive calls
+#' @param point_size numeric, size of points in lollipop rays
+#' @param col_lolli logical, should lollipops be coloured according to cardinal
+#'   directions?
+#' @param xlab,ylab character, the x-axis and y-axis labels
+#' @param title character, the plot title
 
 rays_plot <- function(data, x, y, n_slices = 8, offset = pi/n_slices, 
-                       x_orig = 0, y_orig = 0, show_slices = TRUE, col_lolli = TRUE, 
-                       point_size = 1.5,
-                       xlab = NULL, ylab = NULL, title = NULL){
+                      show_slices = TRUE, 
+                      col_lolli = TRUE, 
+                      point_size = 1.5,
+                      xlab = NULL, ylab = NULL, title = NULL){
   
   # --- Pre-processing ---
   
@@ -40,9 +56,10 @@ rays_plot <- function(data, x, y, n_slices = 8, offset = pi/n_slices,
   
   r <- 5 # max(c(xrange, yrange))
   
-  # So, setting up the origin of rays to the min-max rescaled value of 0
-  x0 <- rescale(x_orig, min = xrange[1], max = xrange[2])
-  y0 <- rescale(y_orig, min = yrange[1], max = yrange[2])
+  # Rays origin - we want points to be centered at (0,0). 
+  # Setting up the origin of rays to the min-max rescaled value of 0
+  x0 <- rescale(0, min = xrange[1], max = xrange[2])
+  y0 <- rescale(0, min = yrange[1], max = yrange[2])
   
   # generate data with slices' polygons
   slices <- rays |>

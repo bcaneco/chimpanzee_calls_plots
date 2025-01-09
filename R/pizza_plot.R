@@ -1,23 +1,53 @@
-#' Plot of data binned over radial polygons
-#' 
-#' @param data
-#' @param x
-#' @param y
-#' @param n_slices 
-#' @param xlab
-#' @param ylab
-#' @param title
-#' @param checking_plot logical, whether to plot auxiliary plot to vizualise
-#'   points in slices, for checking purposes
-#' @param offset numeric, the offset angle (in radians) to start the slices, anti-clockwise
+require(dplyr)
+require(ggplot2)
 
-pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, title = NULL,
-                       cheking_plot = FALSE, fill_slices = TRUE,
-                       plot_points = FALSE,  pnt_col_id = NULL, pnt_col_key = ggplot2::waiver(), pnt_size = 1,
-                       lolli = FALSE,
-                       add_nr_points = TRUE, fill_pal = MetBrewer::met.brewer("Hokusai2"),
+#' Plot of data binned over radial polygons (slices)
+#' 
+#' @param data data.frame, containing acoustic data collected from audio
+#'   recordings of chimpanzee calls. Row entries are recorded calls, with
+#'   columns providing attributes and metrics associated with each call (e.g.
+#'   recording time, call duration, voice frequency, entropy, etc).
+#' @param x <data-masking>, the (unquoted) name of the column to plot as the
+#'   x-axis variable
+#' @param y <data-masking>, the (unquoted) name of the column to plot as the
+#'   y-axis variable
+#' @param n_slices integer, the number of pizza slices
+#' @param xlab,ylab character, the x-axis and y-axis labels
+#' @param title character, the plot title
+#' @param fill_slices logical, whether to colour-fill slices based on the number
+#'   of data points falling in each slice
+#' @param fill_pal character vector, defining a colour palette for filling the
+#'   slices. Function relies on `ggplot2::scale_fill_stepsn()` to generate a
+#'   n-colour binned gradient for the number of points in each slice (currently
+#'   assuming 10 equally-spaced breaks over the range of values [0, 70])
+#' @param plot_points logical, should data points be plotted?
+#' @param pnt_col_id <data-masking>, the name of the column to use as an
+#'   identifier for data points (e.g. subject name). This argument works in
+#'   tandem with `pnt_col_key` to define ID-specific colours
+#' @param pnt_col_key a vector, specifying the desired colours to associate with
+#'   each unique value contained in column specified by `pnt_col_id`
+#' @param checking_plot logical, whether to add auxiliary plot to vizualise
+#'   points in slices, for checking and validation purposes
+#' @param pnt_size numeric, size of data points
+#' @param lolli logical, should added data points be displayed as lollipop-style points?
+#' @param add_nr_points logical, whether to add text annotations with the number
+#'   of points falling in each slice.
+#' @param xlim,ylim vector, the x and y limits of the plot. Defaults to `NULL`,
+#'   which sets the plot limits to the range of values in the data.
+#' @param offset numeric, the offset angle (in radians) to start the slices,
+#'   anti-clockwise
+
+pizza_plot <- function(data, x, y, 
+                       n_slices = NULL, 
+                       offset = 0,
+                       xlab = NULL, ylab = NULL, title = NULL,
+                       fill_slices = TRUE,
+                       fill_pal = MetBrewer::met.brewer("Hokusai2"),
+                       plot_points = FALSE, pnt_col_id = NULL, 
+                       pnt_col_key = ggplot2::waiver(), pnt_size = 1,
+                       lolli = FALSE, add_nr_points = TRUE, 
                        xlim = NULL, ylim = NULL,
-                       offset = 0){
+                       checking_plot = FALSE){
   
   # Note: In cases where x and y span over very different scales,
   # working with radial geometry is tricky. To ease things up, all
@@ -100,8 +130,8 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
       sfheaders::sfc_to_df(pnts_sf[x]) |>
         dplyr::select(x, y)
     }) |>
-    map(function(x){
-      drop_na(x)
+    purrr::map(function(x){
+      tidyr::drop_na(x)
     })
   
   # Update slice data and drop empty slices 
@@ -157,7 +187,7 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
   
   slice_polys <- slices |>
     select(slice_id, n_points, max_dist_poly) |>
-    unnest(max_dist_poly) |>
+    tidyr::unnest(max_dist_poly) |>
     mutate(
       x = unrescale(x, xmin = xrange[1], xmax = xrange[2]),
       y = unrescale(y, xmin = yrange[1], xmax = yrange[2])
@@ -166,7 +196,7 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
   
   slice_arcs <- slices |>
     select(slice_id, med_dist_arc, lpct_dist_arc, upct_dist_arc ) |>
-    unnest(c(med_dist_arc, lpct_dist_arc, upct_dist_arc), names_sep = "_") |>
+    tidyr::unnest(c(med_dist_arc, lpct_dist_arc, upct_dist_arc), names_sep = "_") |>
     mutate(
       across(contains("x"), ~ unrescale(., xmin = xrange[1], xmax = xrange[2])),
       across(contains("y"), ~ unrescale(., xmin = yrange[1], xmax = yrange[2]))
@@ -175,7 +205,7 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
   
   slice_pnts <- slices |> 
     select(slice_id, pts_in_slice) |> 
-    unnest(pts_in_slice) |>
+    tidyr::unnest(pts_in_slice) |>
     mutate(
       x = unrescale(x, xmin = xrange[1], xmax = xrange[2]),
       y = unrescale(y, xmin = yrange[1], xmax = yrange[2])
@@ -184,7 +214,7 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
   
   slice_labels <- slices |>
     select(slice_id, n_points, label_pos) |>
-    unnest(label_pos) |>
+    tidyr::unnest(label_pos) |>
     mutate(
       x = unrescale(x, xmin = xrange[1], xmax = xrange[2]),
       y = unrescale(y, xmin = yrange[1], xmax = yrange[2]),
@@ -308,7 +338,7 @@ pizza_plot <- function(data, x, y, n_slices = NULL, xlab = NULL, ylab = NULL, ti
   
   
   
-  if(cheking_plot){
+  if(checking_plot){
     
     # base layers
     p_check <- slice_polys |>
