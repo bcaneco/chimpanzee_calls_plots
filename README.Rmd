@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 
 ## Visualizations of acoustic data from chimpanzee calls
 
-This repository contains **R** code developed during the analysis underpinning
+This repository contains code developed during the analysis underpinning
 the manuscript *Generative vocal plasticity in chimpanzees* by Lameira *et al*
 (2025, accepted under review). The code was designed to generate clear and
 insightful graphical visualizations of acoustic data collected from audio
@@ -22,15 +22,16 @@ recordings of chimpanzee calls. Several of these visualizations appear in
 the final manuscript, specifically in Figures 3-6.
 
 To ensure reproducibility, this README provides a usage guide and references the
-necessary scripts to generate these plots.Brief descriptions of each
+necessary scripts to generate these plots. Brief descriptions of each
 visualization are also provided for clarity and context.
 
 
 ### Data
 
-Data used for this analysis is provided in the **csv** file and consists of acoustic
-metrics and attributes of calls recorded. Please refer to the manuscript for
-further details on the extraction of the metrics of interest.
+Data used for this analysis is provided in the file
+[calls_data.csv](data/calls_data.csv) and consists of acoustic metrics and
+attributes of calls recorded. Please refer to the manuscript for further details
+on the extraction of the metrics of interest.
 
 ### Software Requirements
 
