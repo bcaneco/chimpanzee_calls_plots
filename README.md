@@ -53,10 +53,10 @@ The following tools are required to run the scripts:
 
 These plots explore vocal movement within the acoustic space by
 graphically depicting sequences of recorded voiced calls. Calls are
-binned into a 2D grid of cells, each representing intervals of variables
-of interest. The plots allow to illustrate transitions in acoustic
-features between consecutive calls, offering two variants: Spokes plots
-and Tracks plots.
+binned into a 2D grid of cells, each representing intervals of acoustic
+parameters of interest. The plots allow to illustrate transitions in
+acoustic features between consecutive calls, offering two variants:
+Spokes plots and Tracks plots.
 
 #### SNL-Spokes: Visualizing Directional Patterns in Acoustic Space
 
