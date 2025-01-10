@@ -22,11 +22,12 @@ Data used for this analysis is provided in the file
 [calls_data.csv](data/calls_data.csv), which includes recording details
 and acoustic metrics of chimpanzee vocalizations. Each row of data
 corresponds to a single call recorded from an individual during a
-specific session. The dataset features both recorded and derived call
-attributes, such as start and end time, frequency range, voice entropy,
-pitch and inflection, as well as changes between consecutive calls. For
-more details on the extraction and processing of these metrics, please
-refer to the original manuscript.
+specific session. The dataset contains recording details and derived
+acoustic parameters, such as subject, session, calls’ start and end
+times, their acoustic frequency range, entropy, pitch and inflection, as
+well as changes between consecutive calls. For more details on the
+extraction and processing of these parameters, please refer to the
+original manuscript.
 
 ## Software Requirements and Setup
 
