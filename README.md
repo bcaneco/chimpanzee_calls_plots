@@ -101,7 +101,7 @@ dt |>
 
 - The colour of the arrows encodes the number of transitions in the same
   direction, representing traffic intensity. Darker shades indicate
-  larger number of occurrences.
+  larger number of occurrences/calls.
 
 - This variant forms the basis for **Figure 2** in the manuscript,
   highlighting directional patterns in voice activation (upper panel)
@@ -116,10 +116,10 @@ style="width:60.0%" />
 
 #### SNL-Tracks: Visualizing Distance Changes in Acoustic Space
 
-- These plots illustrate actual connections between consecutive cells in
-  the acoustic space, depicting distance changes between successive
+- This variant illustrates actual connections between consecutive cells
+  in the acoustic space, depicting distance travelled between successive
   calls under the displayed acoustic metrics. For instance, to depict
-  movement tracks between consecutive calls in terms of voice activation
+  movement traces between consecutive calls in terms of voice activation
   (i.e. maximum frequency vs. duration of calls):
 
 <details class="code-fold">
@@ -151,10 +151,10 @@ dt |>
 - Arrows are colour-coded to indicate the direction of movement (in
   degrees), aiding interpretation of the transitions.
 
-- This variant is the foundation for **Figure 3** in the manuscript,
-  showcasing travel patterns in voice activation (upper panel) and voice
-  modulation (lower panel) at different aggregation levels. To recreate
-  each panel of **Figure 3**, run the script
+- This type of plot is the foundation for **Figure 3** in the
+  manuscript, showcasing travel patterns in voice activation (upper
+  panel) and voice modulation (lower panel) at different aggregation
+  levels. To recreate each panel of **Figure 3**, run the script
   [panels_snl.r](R/panels_snl.R)
 
 <img src="manuscript/figs/duration_vs_maxfreq_snl_tracks.png"
@@ -164,10 +164,11 @@ style="width:60.0%" />
 
 ### “Pizza” plots
 
-These plots visually represent the degree and range of vocal changes
+These plots visually represent the magnitude and range of vocal changes
 between consecutive calls. For a given sequence of calls, acoustic
-changes are grouped into eight radial, slice-shaped polygons, radiating
-from an origin point (representing no change). Key features include:
+differentials are graphically grouped into eight radial, slice-shaped
+polygons, radiating from an origin point (representing no change). Key
+features include:
 
 - **Slice Length**: Determined by the point at the furthest distance
   from the origin within each slice.
