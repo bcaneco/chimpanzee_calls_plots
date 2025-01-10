@@ -24,12 +24,12 @@ dt <- readr::read_csv("data/calls_data.csv")
 
 # Visualizations of acoustic data from chimpanzee calls
 
-This repository contains code developed during the analysis underpinning
-the manuscript *Generative vocal plasticity in chimpanzees* by Lameira *et al*
-(2025, accepted under review). The code was designed to generate clear and
-insightful visualizations of acoustic data collected from audio
-recordings of chimpanzee calls. Several of these visualizations appear in
-the final manuscript, specifically in Figures 2-5.
+This repository contains code developed during the analysis underpinning the
+manuscript *Generative vocal plasticity in chimpanzees* by Lameira *et al*
+(2025, accepted under review). The code was designed to generate insightful
+visualizations of acoustic data collected from audio recordings of chimpanzee
+calls. Several of these visualizations appear in the final manuscript,
+specifically in Figures 2-5.
 
 To ensure reproducibility, this README outlines the setup and provides
 references to the scripts used to generate these figures. Descriptions of each
@@ -72,10 +72,10 @@ The following tools are required to run the scripts:
 ### "Snake-and-Ladder" (SNL) plots
 
 These plots explore vocal movement within the acoustic space by graphically
-depicting sequences of recorded voiced calls. Calls are binned into a 2D grid of cells,
-each representing intervals of selected acoustic metrics. The plots illustrate
-transitions in acoustic features between consecutive calls, offering two
-variants: Spokes plots and Tracks plots.
+depicting sequences of recorded voiced calls. Calls are binned into a 2D grid of
+cells, each representing intervals of selected acoustic metrics. The plots
+illustrate transitions in acoustic features between consecutive calls, offering
+two variants: Spokes plots and Tracks plots.
 
 #### SNL-Spokes: Visualizing Directional Patterns in Acoustic Space
 

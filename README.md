@@ -8,9 +8,9 @@
 This repository contains code developed during the analysis underpinning
 the manuscript *Generative vocal plasticity in chimpanzees* by Lameira
 *et al* (2025, accepted under review). The code was designed to generate
-clear and insightful visualizations of acoustic data collected from
-audio recordings of chimpanzee calls. Several of these visualizations
-appear in the final manuscript, specifically in Figures 2-5.
+insightful visualizations of acoustic data collected from audio
+recordings of chimpanzee calls. Several of these visualizations appear
+in the final manuscript, specifically in Figures 2-5.
 
 To ensure reproducibility, this README outlines the setup and provides
 references to the scripts used to generate these figures. Descriptions
@@ -53,10 +53,11 @@ The following tools are required to run the scripts:
 ### “Snake-and-Ladder” (SNL) plots
 
 These plots explore vocal movement within the acoustic space by
-graphically depicting sequences of recorded calls. Calls are binned into
-a 2D grid of cells, each representing intervals of selected acoustic
-metrics. The plots illustrate transitions in acoustic features between
-consecutive calls, offering two variants: Spokes plots and Tracks plots.
+graphically depicting sequences of recorded voiced calls. Calls are
+binned into a 2D grid of cells, each representing intervals of selected
+acoustic metrics. The plots illustrate transitions in acoustic features
+between consecutive calls, offering two variants: Spokes plots and
+Tracks plots.
 
 #### SNL-Spokes: Visualizing Directional Patterns in Acoustic Space
 
@@ -236,8 +237,10 @@ style="width:60.0%" /> <img
 src="manuscript/figs/pctchange_pcslope_vs_pctchange_entropy_pizza_lolli.png"
 style="width:60.0%" />
 
-To recreate these figures, run the script
+To recreate **Figures 4 and 5**, run the script
 [panels_pizza.r](R/panels_pizza.R)
+
+\`
 
 ### Futher Details
 
