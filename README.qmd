@@ -172,7 +172,7 @@ of **Figure 3**, run the script [panels_snl.r](R/panels_snl.R)
 ### "Pizza" plots
 
 These plots visually represent the magnitude and range of vocal changes between
-consecutive calls. For a given sequence of calls, acoustic differentials are
+consecutive calls. For a given sequence of calls, acoustic changes are
 graphically grouped into eight radial, slice-shaped polygons, radiating from an
 origin point (representing no change). Key features include:
 

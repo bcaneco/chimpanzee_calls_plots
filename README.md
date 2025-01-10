@@ -166,7 +166,7 @@ style="width:60.0%" />
 
 These plots visually represent the magnitude and range of vocal changes
 between consecutive calls. For a given sequence of calls, acoustic
-differentials are graphically grouped into eight radial, slice-shaped
+changes are graphically grouped into eight radial, slice-shaped
 polygons, radiating from an origin point (representing no change). Key
 features include:
 
