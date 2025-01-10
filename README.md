@@ -26,7 +26,7 @@ specific session. The dataset features both recorded and derived call
 attributes, such as start and end time, frequency range, voice entropy,
 pitch and inflection, as well as changes between consecutive calls. For
 more details on the extraction and processing of these metrics, please
-refer to the manuscript.
+refer to the original manuscript.
 
 ## Software Requirements and Setup
 
@@ -44,28 +44,28 @@ The following tools are required to run the scripts:
     *chimpanzee_calls_plots.Rproj*
 4.  Run the command `renv::restore()` in the R console to install the
     required package dependencies
-5.  Open the desired script files and execute to code to reproduce the
+5.  Open the desired script files and execute the code to reproduce the
     plots
 
-## Plots Description and Generation
+## Plots Description and Rendering
 
 ### “Snake-and-Ladder” (SNL) plots
 
 These plots explore vocal movement within the acoustic space by
 graphically depicting sequences of recorded voiced calls. Calls are
-binned into a 2D grid of cells, each representing intervals of selected
-acoustic metrics. The plots illustrate transitions in acoustic features
-between consecutive calls, offering two variants: Spokes plots and
-Tracks plots.
+binned into a 2D grid of cells, each representing intervals of variables
+of interest. The plots allow to illustrate transitions in acoustic
+features between consecutive calls, offering two variants: Spokes plots
+and Tracks plots.
 
 #### SNL-Spokes: Visualizing Directional Patterns in Acoustic Space
 
-- These plots use arrows to describe the direction of change between
-  consecutive calls in the acoustic space. An arrow represents a call
-  and the direction of the cell containing the subsequent call. For
-  instance, to depict directional patterns in terms of voice activation
-  (i.e. maximum frequency vs. duration of calls) between consecutive
-  calls:
+- These plots use short arrows to describe the directional movement
+  between consecutive calls in the acoustic space. Arrows represent
+  calls, and their orientation indicate the direction of the cell
+  containing the acoustic features of subsequent calls. For instance, to
+  depict directional patterns in terms of voice activation (i.e. maximum
+  frequency vs duration of calls) between consecutive calls:
 
 <details class="code-fold">
 <summary>Code</summary>
