@@ -240,8 +240,6 @@ style="width:60.0%" />
 To recreate **Figures 4 and 5**, run the script
 [panels_pizza.r](R/panels_pizza.R)
 
-\`
-
 ### Futher Details
 
 Further insights and considerations that guided the development of these

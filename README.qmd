@@ -233,7 +233,6 @@ This plot serves as the basis for the graphical panels presented in the manuscri
 
 To recreate **Figures 4 and 5**, run the script [panels_pizza.r](R/panels_pizza.R)
 
-`
 
 ### Futher Details
 
