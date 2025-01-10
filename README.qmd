@@ -28,12 +28,12 @@ This repository contains code developed during the analysis underpinning the
 manuscript *Generative vocal plasticity in chimpanzees* by Lameira *et al*
 (2025, accepted under review). The code was designed to generate insightful
 visualizations of acoustic data collected from audio recordings of chimpanzee
-calls. Several of these visualizations appear in the final manuscript,
+voiced calls. Several of these visualizations appear in the final manuscript,
 specifically in Figures 2-5.
 
-To ensure reproducibility, this README outlines the setup and provides
-references to the scripts used to generate these figures. Descriptions of each
-visualization are included for context and ease of interpretation.
+To support reproducibility, this README outlines the setup and points to the
+scripts used to generate these figures. Descriptions of each visualization are
+included for context and ease of interpretation.
 
 
 ## Data
@@ -43,9 +43,9 @@ Data used for this analysis is provided in the file
 acoustic metrics of chimpanzee vocalizations. Each row of data corresponds to a
 single call recorded from an individual during a specific session. The dataset
 features both recorded and derived call attributes, such as start and end time,
-frequency range, voice entropy and inflection, and changes between consecutive
-calls. For more details on the extraction and processing of these metrics,
-please refer to the manuscript.
+frequency range, voice entropy, pitch and inflection, as well as changes between
+consecutive calls. For more details on the extraction and processing of these
+metrics, please refer to the manuscript.
 
 ## Software Requirements and Setup
 
