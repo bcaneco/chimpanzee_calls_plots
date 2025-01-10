@@ -72,7 +72,7 @@ The following tools are required to run the scripts:
 ### "Snake-and-Ladder" (SNL) plots
 
 These plots explore vocal movement within the acoustic space by graphically
-depicting sequences of recorded calls. Calls are binned into a 2D grid of cells,
+depicting sequences of recorded voiced calls. Calls are binned into a 2D grid of cells,
 each representing intervals of selected acoustic metrics. The plots illustrate
 transitions in acoustic features between consecutive calls, offering two
 variants: Spokes plots and Tracks plots.
@@ -230,9 +230,9 @@ This plot serves as the basis for the graphical panels presented in the manuscri
 ![](manuscript/figs/pctchange_duration_vs_pctchange_maxfreq_pizza_lolli.png){width=60%}
 ![](manuscript/figs/pctchange_pcslope_vs_pctchange_entropy_pizza_lolli.png){width=60%}
 
-To recreate these figures, run the script [panels_pizza.r](R/panels_pizza.R)
+To recreate **Figures 4 and 5**, run the script [panels_pizza.r](R/panels_pizza.R)
 
-
+`
 
 ### Futher Details
 
